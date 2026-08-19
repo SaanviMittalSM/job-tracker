@@ -122,6 +122,15 @@
   .stamp.empty { color: var(--text-dim); }
   .check-btn { background: none; border: 1px dashed var(--border); color: var(--text-dim); border-radius: 5px; font-size: 10px; padding: 1px 5px; cursor: pointer; margin-left: 4px; }
   .auto-badge { font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: .03em; }
+  .signals-wrap { padding: 0 20px 12px; }
+  .signal-card {
+    display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--accent);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 12px; flex-wrap: wrap;
+  }
+  .signal-card .sig-main { flex: 1; min-width: 200px; }
+  .signal-card .sig-company { font-weight: 700; }
+  .signal-card .sig-meta { color: var(--text-dim); font-size: 11px; }
+  .signal-card button { font-size: 11px; padding: 5px 10px; }
   .gate {
     display: flex; align-items: center; justify-content: center; min-height: 70vh; padding: 20px;
   }
@@ -167,6 +176,8 @@
 </header>
 
 <div class="sync-line" id="syncLine">Loading...</div>
+
+<div id="signalsPanel"></div>
 
 <div class="stats" id="statsBar"></div>
 
@@ -223,6 +234,7 @@ const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian P
 let COMPANIES = [];
 
 let currentUser = null;
+let gmailSignals = [];
 let data = [];           // merged view-model rows, one per company
 let postingsByCompany = {};
 let checksByCompany = {};
@@ -285,10 +297,11 @@ async function loadAll() {
   const line = document.getElementById('syncLine');
   line.className = 'sync-line';
   line.textContent = 'Loading...';
-  const [appsRes, postingsRes, checksRes] = await Promise.all([
+  const [appsRes, postingsRes, checksRes, signalsRes] = await Promise.all([
     sb.from('applications').select('*').eq('user_id', currentUser.id),
     sb.from('postings').select('*'),
     sb.from('company_checks').select('*'),
+    sb.from('gmail_signals').select('*').eq('user_id', currentUser.id).eq('dismissed', false),
   ]);
   if (appsRes.error) { line.className = 'sync-line err'; line.textContent = 'Failed to load applications: ' + appsRes.error.message; return; }
 
@@ -300,11 +313,59 @@ async function loadAll() {
   (checksRes.data || []).forEach(c => { checksByCompany[c.company] = c; });
 
   data = (appsRes.data || []).map(rowFromApplication);
+  gmailSignals = signalsRes.data || [];
+  renderSignals();
 
   const postingsCount = (postingsRes.data || []).length;
   line.className = 'sync-line ok';
   line.textContent = `Loaded ${data.length} companies, ${postingsCount} live postings from Supabase.`;
 }
+
+const SIGNAL_TO_STATUS = {
+  applied: 'Applied', oa_assessment: 'OA/Assessment', interview: 'Phone Screen',
+  offer: 'Offer', rejected: 'Rejected',
+};
+
+function renderSignals() {
+  const panel = document.getElementById('signalsPanel');
+  if (!gmailSignals.length) { panel.innerHTML = ''; return; }
+  panel.innerHTML = `<div class="signals-wrap">` + gmailSignals.map(s => {
+    const match = data.find(r => r.company.toLowerCase() === s.company.toLowerCase() || r.company.toLowerCase().includes(s.company.toLowerCase()) || s.company.toLowerCase().includes(r.company.toLowerCase()));
+    const suggestedStatus = SIGNAL_TO_STATUS[s.signal] || null;
+    return `<div class="signal-card">
+      <div class="sig-main">
+        📧 Gmail found: <span class="sig-company">${escHtml(s.company)}</span> — ${escHtml(s.signal)} on ${escHtml(s.date)}
+        <div class="sig-meta">${escHtml(s.subject || '')} ${match ? '' : '(no matching row — dismiss or add this company first)'}</div>
+      </div>
+      ${match && suggestedStatus ? `<button data-accept-signal="${s.id}" data-match-id="${match.id}" data-status="${suggestedStatus}">Apply: set ${escHtml(match.company)} → ${suggestedStatus}</button>` : ''}
+      <button class="ghost" data-dismiss-signal="${s.id}">Dismiss</button>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+document.getElementById('signalsPanel').addEventListener('click', async e => {
+  if (e.target.dataset.acceptSignal) {
+    const signalId = e.target.dataset.acceptSignal;
+    const matchId = e.target.dataset.matchId;
+    const status = e.target.dataset.status;
+    const row = data.find(r => r.id === matchId);
+    if (row) {
+      row.status = status;
+      const patch = { status };
+      if (APPLIED_STATUSES.includes(status) && !row.dateApplied) { row.dateApplied = todayStr(); patch.date_applied = row.dateApplied; }
+      await updateApplication(row.id, patch);
+    }
+    await sb.from('gmail_signals').update({ dismissed: true }).eq('id', signalId);
+    gmailSignals = gmailSignals.filter(s => s.id !== signalId);
+    renderSignals(); render();
+  }
+  if (e.target.dataset.dismissSignal) {
+    const signalId = e.target.dataset.dismissSignal;
+    await sb.from('gmail_signals').update({ dismissed: true }).eq('id', signalId);
+    gmailSignals = gmailSignals.filter(s => s.id !== signalId);
+    renderSignals();
+  }
+});
 
 function rowFromApplication(a) {
   const check = checksByCompany[a.company];
