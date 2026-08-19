@@ -1,23 +1,44 @@
 // Pulls India-based SDE/intern postings from public Greenhouse and Lever job-board APIs
 // (both explicitly designed for programmatic read access — no scraping, no ToS issue)
-// and merges them into postings.json for the tracker dashboard to consume via GitHub sync.
-const fs = require('fs');
+// and upserts them straight into Supabase (postings + company_checks tables).
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars.');
+  process.exit(1);
+}
 
 const GREENHOUSE = {
-  anthropic: 'Anthropic', figma: 'Figma', databricks: 'Databricks', scaleai: 'Scale AI',
-  assemblyai: 'AssemblyAI', stripe: 'Stripe', slice: 'Slice', gitlab: 'GitLab',
-  elastic: 'Elastic', mongodb: 'MongoDB', cloudflare: 'Cloudflare', okta: 'Okta',
-  zscaler: 'Zscaler', twilio: 'Twilio', dropbox: 'Dropbox', postman: 'Postman', xai: 'xAI',
+  anthropic: ['Anthropic', 'AI Research/Frontier'],
+  figma: ['Figma', 'Global SaaS/Cloud'],
+  databricks: ['Databricks', 'Global SaaS/Cloud'],
+  scaleai: ['Scale AI', 'AI Research/Frontier'],
+  assemblyai: ['AssemblyAI', 'Voice/Speech AI'],
+  stripe: ['Stripe', 'Global SaaS/Cloud'],
+  slice: ['Slice', 'Indian Product/Fintech'],
+  gitlab: ['GitLab', 'Global SaaS/Cloud'],
+  elastic: ['Elastic', 'Global SaaS/Cloud'],
+  mongodb: ['MongoDB', 'Global SaaS/Cloud'],
+  cloudflare: ['Cloudflare', 'Global SaaS/Cloud'],
+  okta: ['Okta', 'Global SaaS/Cloud'],
+  zscaler: ['Zscaler', 'Global SaaS/Cloud'],
+  twilio: ['Twilio', 'Global SaaS/Cloud'],
+  dropbox: ['Dropbox', 'Global SaaS/Cloud'],
+  postman: ['Postman', 'Global SaaS/Cloud'],
+  xai: ['xAI', 'AI Research/Frontier'],
 };
 const LEVER = {
-  plivo: 'Plivo', cred: 'CRED', meesho: 'Meesho', porter: 'Porter', freshworks: 'Freshworks',
+  plivo: ['Plivo', 'Voice/Speech AI'],
+  cred: ['CRED', 'Indian Product/Fintech'],
+  meesho: ['Meesho', 'Indian Product/Fintech'],
+  porter: ['Porter', 'Indian Product/Fintech'],
+  freshworks: ['Freshworks', 'Indian Product/Fintech'],
 };
 
 const INDIA_RE = /\bindia\b|bengaluru|bangalore|hyderabad|\bpune\b|gurgaon|gurugram|\bnoida\b|\bmumbai\b|\bchennai\b|delhi ncr/i;
 const ROLE_RE = /engineer|developer|\bsde\b|software|\bswe\b|programmer/i;
 const SENIOR_RE = /senior|\bsr\.?\b|staff|principal|director|\bvp\b|vice president|head of|distinguished|architect|manager|\blead\b|\bii\b|\biii\b|\biv\b|\b[2-9]\+? ?years?\b/i;
 const ENTRY_RE = /intern|new grad|university grad|graduate program|entry.level|associate|\bsde ?1\b|\bsde ?i\b|software engineer i\b|early career|campus/i;
-// Customer/sales-facing "engineer" titles at SaaS companies aren't SDE roles despite matching ROLE_RE.
 const NON_SDE_RE = /sales engineer|solutions engineer|support engineer|technical support|customer engineer|success engineer|escalation engineer|\bengineer,? india\b/i;
 
 function isEntryLevel(title) {
@@ -39,7 +60,7 @@ async function discoverGreenhouse(token) {
     .map(j => ({
       url: j.absolute_url,
       title: j.title,
-      deadline: j.application_deadline ? String(j.application_deadline).slice(0, 10) : '',
+      deadline: j.application_deadline ? String(j.application_deadline).slice(0, 10) : null,
     }));
 }
 
@@ -50,40 +71,62 @@ async function discoverLever(token) {
       const locs = [p.categories?.location, ...(p.categories?.allLocations || [])].filter(Boolean).join(' ');
       return INDIA_RE.test(locs) && isEntryLevel(p.text || '');
     })
-    .map(p => ({ url: p.hostedUrl, title: p.text, deadline: '' }));
+    .map(p => ({ url: p.hostedUrl, title: p.text, deadline: null }));
+}
+
+async function supabaseUpsert(table, rows, conflictCols) {
+  if (!rows.length) return;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?on_conflict=${conflictCols}`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=minimal',
+    },
+    body: JSON.stringify(rows),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Supabase upsert into ${table} failed: HTTP ${res.status} ${body}`);
+  }
 }
 
 async function main() {
   const now = new Date().toISOString();
-  const checkedThisRun = {};
+  const postingRows = [];
+  const checkRows = [];
+  let totalFound = 0;
+  const errored = [];
 
-  for (const [token, name] of Object.entries(GREENHOUSE)) {
-    try {
-      checkedThisRun[name] = { lastChecked: now, postings: await discoverGreenhouse(token), source: 'greenhouse' };
-    } catch (e) {
-      checkedThisRun[name] = { lastChecked: now, postings: [], source: 'greenhouse', error: String(e.message || e) };
+  async function processSource(entries, discoverFn) {
+    for (const [token, [name, category]] of Object.entries(entries)) {
+      let postings = [];
+      let source = discoverFn === discoverGreenhouse ? 'greenhouse' : 'lever';
+      try {
+        postings = await discoverFn(token);
+      } catch (e) {
+        errored.push(name);
+        console.error(`  ${name}: ${e.message}`);
+      }
+      checkRows.push({ company: name, category, last_checked_at: now, source });
+      postings.forEach(p => {
+        postingRows.push({
+          company: name, category, title: p.title, url: p.url,
+          deadline: p.deadline, source, last_checked_at: now,
+        });
+      });
+      totalFound += postings.length;
     }
   }
-  for (const [token, name] of Object.entries(LEVER)) {
-    try {
-      checkedThisRun[name] = { lastChecked: now, postings: await discoverLever(token), source: 'lever' };
-    } catch (e) {
-      checkedThisRun[name] = { lastChecked: now, postings: [], source: 'lever', error: String(e.message || e) };
-    }
-  }
 
-  let existing = { companies: {} };
-  if (fs.existsSync('postings.json')) {
-    try { existing = JSON.parse(fs.readFileSync('postings.json', 'utf8')); } catch (e) { /* start fresh on parse failure */ }
-  }
-  // Keep companies discovered by other sources (e.g. the WebSearch-based routine) untouched;
-  // overwrite only the companies this script actually checked.
-  const merged = { ...(existing.companies || {}), ...checkedThisRun };
-  fs.writeFileSync('postings.json', JSON.stringify({ generatedAt: now, companies: merged }, null, 2) + '\n');
+  await processSource(GREENHOUSE, discoverGreenhouse);
+  await processSource(LEVER, discoverLever);
 
-  const totalPostings = Object.values(checkedThisRun).reduce((n, c) => n + c.postings.length, 0);
-  const errored = Object.entries(checkedThisRun).filter(([, c]) => c.error).map(([name]) => name);
-  console.log(`Checked ${Object.keys(checkedThisRun).length} companies via Greenhouse/Lever, found ${totalPostings} India-relevant posting(s).`);
+  await supabaseUpsert('company_checks', checkRows, 'company');
+  await supabaseUpsert('postings', postingRows, 'company,url');
+
+  console.log(`Checked ${checkRows.length} companies via Greenhouse/Lever, found ${totalFound} India-relevant posting(s), upserted to Supabase.`);
   if (errored.length) console.log(`Errors fetching: ${errored.join(', ')}`);
 }
 

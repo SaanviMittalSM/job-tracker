@@ -1,0 +1,14 @@
+{
+  "name": "Job Application Tracker",
+  "short_name": "JobTracker",
+  "description": "Off-campus placement tracker with automated discovery and referral workflow",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14161a",
+  "theme_color": "#2f6fed",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

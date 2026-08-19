@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>Job Application Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2f6fed">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --bg: #f5f6f8;
@@ -70,39 +74,19 @@
   }
   button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   button.ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  button:disabled { opacity: .5; cursor: default; }
   input[type=file] { display: none; }
-  .stats {
-    display: flex;
-    gap: 10px;
-    padding: 12px 20px;
-    flex-wrap: wrap;
-  }
-  .stat {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    min-width: 90px;
-  }
+  .stats { display: flex; gap: 10px; padding: 12px 20px; flex-wrap: wrap; }
+  .stat { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; min-width: 90px; }
   .stat .num { font-size: 20px; font-weight: 700; }
   .stat .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; }
   .sync-line { padding: 0 20px 10px; color: var(--text-dim); font-size: 11px; }
   .sync-line.ok { color: var(--green); }
   .sync-line.err { color: var(--yellow); }
-  .controls {
-    display: flex;
-    gap: 10px;
-    padding: 0 20px 12px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .controls { display: flex; gap: 10px; padding: 0 20px 12px; flex-wrap: wrap; align-items: center; }
   .controls input[type=text], .controls select {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    font-size: 12px;
+    padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text); font-size: 12px;
   }
   main { padding: 0 20px 40px; overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; min-width: 1500px; background: var(--panel); border-radius: 8px; overflow: hidden; }
@@ -112,20 +96,11 @@
   tr:nth-child(even) td { background: var(--row-alt); }
   tr.stale td { box-shadow: inset 3px 0 0 var(--yellow); }
   td input[type=text], td select, td textarea {
-    width: 100%;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--text);
-    font-size: 12px;
-    padding: 3px 4px;
-    border-radius: 4px;
-    font-family: inherit;
+    width: 100%; border: 1px solid transparent; background: transparent; color: var(--text);
+    font-size: 12px; padding: 3px 4px; border-radius: 4px; font-family: inherit;
   }
   td input[type=text]:hover, td select:hover, td textarea:hover,
-  td input[type=text]:focus, td select:focus, td textarea:focus {
-    border-color: var(--border);
-    background: var(--bg);
-  }
+  td input[type=text]:focus, td select:focus, td textarea:focus { border-color: var(--border); background: var(--bg); }
   td.notes textarea { min-width: 160px; resize: vertical; white-space: normal; }
   .role-col input { min-width: 130px; }
   .company-cell { font-weight: 600; white-space: nowrap; }
@@ -147,27 +122,51 @@
   .stamp.empty { color: var(--text-dim); }
   .check-btn { background: none; border: 1px dashed var(--border); color: var(--text-dim); border-radius: 5px; font-size: 10px; padding: 1px 5px; cursor: pointer; margin-left: 4px; }
   .auto-badge { font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: .03em; }
+  .gate {
+    display: flex; align-items: center; justify-content: center; min-height: 70vh; padding: 20px;
+  }
+  .gate-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px; max-width: 380px; text-align: center;
+  }
+  .gate-card h2 { margin: 0 0 8px; font-size: 18px; }
+  .gate-card p { color: var(--text-dim); font-size: 13px; margin: 0 0 20px; }
+  .google-btn {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;
+  }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); }
+  #app { display: none; }
 </style>
 </head>
 <body>
 
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <h2>Job Application Tracker</h2>
+    <p>Sign in to track your applications, alumni outreach, and see live-discovered postings.</p>
+    <button class="google-btn" id="signInBtn">Sign in with Google</button>
+    <p id="authError" style="color:var(--red); margin-top:12px; font-size:12px;"></p>
+  </div>
+</div>
+
+<div id="app">
 <header>
   <div>
     <h1>Job Application Tracker</h1>
-    <div class="sub">Sorted with newest/open postings on top, stale companies at the bottom by default — click any column to override. Applied &amp; outreach dates auto-stamp from status changes.</div>
+    <div class="sub">Sorted with newest/open postings on top, stale companies at the bottom by default — click any column to override.</div>
   </div>
   <div class="toolbar">
-    <button id="syncBtn">🔄 Sync from GitHub</button>
+    <span class="user-chip" id="userChip"></span>
+    <button id="syncBtn">🔄 Refresh</button>
     <button id="addRowBtn">+ Add Row</button>
     <button class="secondary" id="exportJsonBtn">Export JSON</button>
     <button class="secondary" id="exportCsvBtn">Export CSV</button>
-    <button class="secondary" id="importBtn">Import JSON</button>
-    <input type="file" id="importFile" accept="application/json">
-    <button class="ghost" id="resetSeedBtn">Reset to Seed List</button>
+    <button class="ghost" id="signOutBtn">Sign out</button>
   </div>
 </header>
 
-<div class="sync-line" id="syncLine">Not synced from GitHub yet.</div>
+<div class="sync-line" id="syncLine">Loading...</div>
 
 <div class="stats" id="statsBar"></div>
 
@@ -203,16 +202,20 @@
 </main>
 
 <footer>
-  Seeded with 100+ companies across Global Big Tech, Global SaaS/Cloud, Indian Product/Fintech, Quant/Finance, AI Research/Frontier, Voice/Speech AI, IT Services, plus job aggregator portals. Companies on Greenhouse/Lever are auto-scanned every 8 hours by a GitHub Actions workflow and synced from <a href="https://github.com/SaanviMittalSM/job-tracker" target="_blank" rel="noopener">SaanviMittalSM/job-tracker</a>; other rows use the manual "check" button. Edit Status/Outreach/Alumni/Notes inline — dates auto-stamp when you move a status forward. See README.md for the alumni outreach workflow and message templates.
+  Data lives in Supabase — <code>postings</code> (public, written by the Greenhouse/Lever discovery pipeline every 8h) and <code>applications</code> (private to your account). Companies on Greenhouse/Lever are auto-scanned; other rows use the manual "check" button. Edit Status/Outreach/Alumni/Notes inline — dates auto-stamp when you move a status forward. See README.md for the alumni outreach workflow and message templates.
 </footer>
+</div>
 
 <script>
+const SUPABASE_URL = 'https://kpyuqalsfhvxmjvaczxr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtweXVxYWxzZmh2eG1qdmFjenhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMzE3NDksImV4cCI6MjEwMjcwNzc0OX0.ApEJX8M0HXEPiU9WtrljR0-qU7-v6l3-UXLKZ-NS_Ns';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const STATUS_OPTS = ['Not Started','Researching','Applied','OA/Assessment','Phone Screen','Interview','Offer','Rejected','Withdrawn'];
 const OUTREACH_OPTS = ['Not Started','Alumni Identified','Message Drafted','Sent','Responded - Positive','Responded - No Referral','No Response','N/A'];
 const APPLIED_STATUSES = ['Applied','OA/Assessment','Phone Screen','Interview','Offer','Rejected','Withdrawn'];
 const SENT_OUTREACH = ['Sent','Responded - Positive','Responded - No Referral','No Response'];
-const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian Product/Fintech'];
-const GITHUB_POSTINGS_URL = 'https://raw.githubusercontent.com/SaanviMittalSM/job-tracker/main/postings.json';
+const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian Product/Fintech','Global SaaS/Cloud'];
 
 const SEED = [
 ["Google","https://careers.google.com","Global Big Tech"],
@@ -345,73 +348,101 @@ const SEED = [
 ["iimjobs","https://www.iimjobs.com","Aggregator Portal"]
 ];
 
-// Specific current postings found via web search on 2026-08-19. Each entry: {url, title, deadline}.
-// deadline is '' unless a page explicitly stated one. Superseded by GITHUB_POSTINGS_URL once the
-// daily discovery routine has pushed at least one postings.json to the repo.
-const POSTINGS_SEED = {
-  "Sarvam AI": [{ url: "https://www.sarvam.ai/careers/jobs/681f6891-9f59-4b60-a9cb-4c5cfb1454a1", title: "AI Engineer - Intern", deadline: "" }],
-  "Databricks": [{ url: "https://www.databricks.com/company/careers/university-recruiting/software-engineering-intern-2026-6866534002", title: "Software Engineering Intern (2026)", deadline: "" }],
-  "Skit.ai": [{ url: "https://skit.keka.com/careers/jobdetails/88785", title: "Software Engineer (Solutions)", deadline: "" }],
-  "Exotel": [{ url: "https://in.prosple.com/graduate-employers/exotel-india/jobs-internships/software-engineer-intern-gen-ai", title: "Software Engineer Intern (Gen AI)", deadline: "" }],
-  "Flipkart": [{ url: "https://www.flipkartcareers.com/students", title: "GRiD — student SDE pipeline", deadline: "" }],
-  "Atlassian": [{ url: "https://www.atlassian.com/company/careers/earlycareers", title: "Early Careers — Bengaluru", deadline: "" }],
-  "Google": [{ url: "https://www.google.com/about/careers/applications/internships", title: "Software Engineering Intern — search current cycle", deadline: "" }],
-};
-
-function makeSeedData() {
-  return SEED.map(([company, portal, category], i) => ({
-    id: 'seed-' + i,
-    company, portal, category: category || 'Other',
-    role: category === 'Aggregator Portal' ? 'Search / monitor for new postings' : 'SDE Intern / New Grad',
-    postings: (POSTINGS_SEED[company] || []).map(p => ({ ...p })),
-    status: 'Not Started',
-    dateApplied: '',
-    alumniName: '', outreachStatus: 'Not Started', outreachDate: '',
-    lastChecked: '', notes: ''
-  }));
-}
-
-const STORE_KEY = 'jobTrackerData_v2';
-let data = load();
+let currentUser = null;
+let data = [];           // merged view-model rows, one per company
+let postingsByCompany = {};
+let checksByCompany = {};
 let sortKey = null, sortDir = 1;
 let filters = { q: '', status: '', outreach: '', category: '', rotation: false };
 
-function load() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return migrate(JSON.parse(raw));
-    const legacy = localStorage.getItem('jobTrackerData_v1');
-    if (legacy) return migrate(JSON.parse(legacy));
-  } catch (e) {}
-  return makeSeedData();
+// ---------- Auth ----------
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+  if (currentUser) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('userChip').textContent = currentUser.email;
+    boot();
+  } else {
+    document.getElementById('gate').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+document.getElementById('signInBtn').addEventListener('click', async () => {
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  if (error) document.getElementById('authError').textContent = error.message;
+});
+document.getElementById('signOutBtn').addEventListener('click', () => sb.auth.signOut());
+
+// ---------- Boot / data loading ----------
+async function boot() {
+  await ensureApplicationsSeeded();
+  await loadAll();
+  populateFilterSelects();
+  render();
 }
 
-// Backfills fields added to the schema after a row was already cached in localStorage,
-// and drops fields retired from the schema (skillFit/interestFit/compLevel/directLink).
-function migrate(rows) {
-  const seedByCompany = Object.fromEntries(SEED.map(([company, portal, category]) => [company, { portal, category }]));
-  return rows.map(r => {
-    const seed = seedByCompany[r.company];
-    let postings = Array.isArray(r.postings) ? r.postings.slice() : [];
-    if (!postings.length && r.directLink) {
-      postings = [{ url: r.directLink, title: 'Direct link', deadline: '' }];
-    }
-    if (!postings.length && POSTINGS_SEED[r.company]) {
-      postings = POSTINGS_SEED[r.company].map(p => ({ ...p }));
-    }
-    const { directLink, skillFit, interestFit, compLevel, ...rest } = r;
-    return {
-      category: seed ? seed.category : 'Other',
-      ...rest,
-      postings,
-    };
+async function ensureApplicationsSeeded() {
+  const { data: existing, error } = await sb.from('applications').select('company').eq('user_id', currentUser.id);
+  if (error) { console.error(error); return; }
+  const have = new Set((existing || []).map(r => r.company));
+  const missing = SEED.filter(([company]) => !have.has(company)).map(([company, portal, category]) => ({
+    user_id: currentUser.id, company, category: category || 'Other', portal_url: portal,
+    role: category === 'Aggregator Portal' ? 'Search / monitor for new postings' : 'SDE Intern / New Grad',
+    status: 'Not Started', outreach_status: 'Not Started',
+  }));
+  if (missing.length) {
+    const { error: insErr } = await sb.from('applications').insert(missing);
+    if (insErr) console.error('seed insert failed', insErr);
+  }
+}
+
+async function loadAll() {
+  const line = document.getElementById('syncLine');
+  line.className = 'sync-line';
+  line.textContent = 'Loading...';
+  const [appsRes, postingsRes, checksRes] = await Promise.all([
+    sb.from('applications').select('*').eq('user_id', currentUser.id),
+    sb.from('postings').select('*'),
+    sb.from('company_checks').select('*'),
+  ]);
+  if (appsRes.error) { line.className = 'sync-line err'; line.textContent = 'Failed to load applications: ' + appsRes.error.message; return; }
+
+  postingsByCompany = {};
+  (postingsRes.data || []).forEach(p => {
+    (postingsByCompany[p.company] ||= []).push(p);
   });
-}
-function save() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(data));
-  renderStats();
+  checksByCompany = {};
+  (checksRes.data || []).forEach(c => { checksByCompany[c.company] = c; });
+
+  data = (appsRes.data || []).map(rowFromApplication);
+
+  const postingsCount = (postingsRes.data || []).length;
+  line.className = 'sync-line ok';
+  line.textContent = `Loaded ${data.length} companies, ${postingsCount} live postings from Supabase.`;
 }
 
+function rowFromApplication(a) {
+  const check = checksByCompany[a.company];
+  const autoChecked = check ? check.last_checked_at : null;
+  const manualChecked = a.last_checked ? new Date(a.last_checked).toISOString() : null;
+  const lastChecked = [autoChecked, manualChecked].filter(Boolean).sort().slice(-1)[0] || '';
+  return {
+    id: a.id, company: a.company, category: a.category, role: a.role, portal: a.portal_url,
+    postings: postingsByCompany[a.company] || [],
+    status: a.status, dateApplied: a.date_applied || '', alumniName: a.alumni_name || '',
+    outreachStatus: a.outreach_status, outreachDate: a.outreach_date || '',
+    lastChecked, notes: a.notes || '',
+  };
+}
+
+async function updateApplication(id, patch) {
+  const { error } = await sb.from('applications').update(patch).eq('id', id);
+  if (error) { alert('Save failed: ' + error.message); console.error(error); }
+}
+
+// ---------- Rendering (same shape as before) ----------
 function deadlineBadge(deadline) {
   if (!deadline) return '';
   const days = Math.ceil((new Date(deadline + 'T00:00:00').getTime() - Date.now()) / 86400000);
@@ -421,22 +452,22 @@ function deadlineBadge(deadline) {
 }
 
 function renderPostings(r) {
-  const items = (r.postings || []).map((p, idx) => `
+  const items = (r.postings || []).map((p) => `
     <div class="posting-item">
       <a href="${escAttr(p.url)}" target="_blank" rel="noopener" title="${escAttr(p.title || p.url)}">${escHtml(p.title || 'posting')}</a>
       ${deadlineBadge(p.deadline)}
-      <button class="posting-rm" data-rm-posting="${idx}" title="Remove">✕</button>
+      ${p.source === 'manual' ? `<button class="posting-rm" data-rm-posting="${escAttr(p.id)}" title="Remove">✕</button>` : ''}
     </div>`).join('');
   return items + `<button class="add-posting-btn" data-add-posting="1">+ posting</button>`;
 }
 
 function stamp(dateStr) {
-  return dateStr ? `<span class="stamp">${dateStr}</span>` : `<span class="stamp empty">—</span>`;
+  return dateStr ? `<span class="stamp">${String(dateStr).slice(0,10)}</span>` : `<span class="stamp empty">—</span>`;
 }
 
 function daysSince(dateStr) {
   if (!dateStr) return Infinity;
-  const d = new Date(dateStr.slice(0,10) + 'T00:00:00');
+  const d = new Date(String(dateStr).slice(0, 10) + 'T00:00:00');
   return Math.floor((Date.now() - d.getTime()) / 86400000);
 }
 
@@ -444,6 +475,9 @@ function populateFilterSelects() {
   const sf = document.getElementById('statusFilter');
   const of = document.getElementById('outreachFilter');
   const cf = document.getElementById('categoryFilter');
+  sf.innerHTML = '<option value="">All statuses</option>';
+  of.innerHTML = '<option value="">All outreach states</option>';
+  cf.innerHTML = '<option value="">All categories</option>';
   STATUS_OPTS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sf.appendChild(o); });
   OUTREACH_OPTS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; of.appendChild(o); });
   const categories = [...new Set(data.map(r => r.category || 'Other'))].sort();
@@ -452,6 +486,12 @@ function populateFilterSelects() {
 
 function selectHtml(opts, current) {
   return opts.map(o => `<option value="${o}" ${o === current ? 'selected' : ''}>${o}</option>`).join('');
+}
+
+function freshnessRank(row) {
+  const hasPostings = (row.postings || []).length > 0;
+  const checkedTime = row.lastChecked ? new Date(row.lastChecked).getTime() : -Infinity;
+  return { hasPostings, checkedTime };
 }
 
 function visibleRows() {
@@ -481,7 +521,6 @@ function visibleRows() {
       return 0;
     });
   } else {
-    // Default view: companies with open postings first (freshest-checked first), stale/no-posting rows sink to the bottom.
     rows = rows.slice().sort((a, b) => {
       const fa = freshnessRank(a), fb = freshnessRank(b);
       if (fa.hasPostings !== fb.hasPostings) return fa.hasPostings ? -1 : 1;
@@ -492,12 +531,6 @@ function visibleRows() {
   return rows;
 }
 
-function freshnessRank(row) {
-  const hasPostings = (row.postings || []).length > 0;
-  const checkedTime = row.lastChecked ? new Date(row.lastChecked.slice(0, 10) + 'T00:00:00').getTime() : -Infinity;
-  return { hasPostings, checkedTime };
-}
-
 function render() {
   const tbody = document.getElementById('tbody');
   const rows = visibleRows();
@@ -505,7 +538,7 @@ function render() {
     const stale = r.lastChecked && daysSince(r.lastChecked) > 7;
     const isAuto = AUTO_TIER_CATEGORIES.includes(r.category);
     return `<tr data-id="${r.id}" class="${stale ? 'stale' : ''}">
-      <td class="company-cell">${r.company}${r.portal ? `<a href="${r.portal}" target="_blank" rel="noopener">open</a>` : ''}</td>
+      <td class="company-cell">${escHtml(r.company)}${r.portal ? `<a href="${escAttr(r.portal)}" target="_blank" rel="noopener">open</a>` : ''}</td>
       <td><span class="chip dim">${escHtml(r.category || 'Other')}</span></td>
       <td class="role-col"><input type="text" data-field="role" value="${escAttr(r.role)}"></td>
       <td class="postings-cell">${renderPostings(r)}</td>
@@ -516,14 +549,14 @@ function render() {
       <td>${stamp(r.outreachDate)}</td>
       <td>${stamp(r.lastChecked)}${isAuto ? '<div class="auto-badge">auto</div>' : `<button class="check-btn" data-check="1" title="Mark checked today">check</button>`}</td>
       <td class="notes"><textarea data-field="notes" rows="1">${escHtml(r.notes)}</textarea></td>
-      <td><button class="del-btn" data-del="${r.id}" title="Delete row">✕</button></td>
+      <td><button class="del-btn" data-reset="${r.id}" title="Reset to Not Started">↺</button></td>
     </tr>`;
   }).join('');
   renderStats();
 }
 
-function escAttr(s) { return (s||'').replace(/"/g,'&quot;'); }
-function escHtml(s) { return (s||'').replace(/</g,'&lt;'); }
+function escAttr(s) { return String(s ?? '').replace(/"/g,'&quot;'); }
+function escHtml(s) { return String(s ?? '').replace(/</g,'&lt;'); }
 
 function renderStats() {
   const total = data.length;
@@ -544,36 +577,47 @@ function renderStats() {
 
 function todayStr() { const d = new Date(); return d.toISOString().slice(0,10); }
 
+const FIELD_TO_COLUMN = { role: 'role', alumniName: 'alumni_name', notes: 'notes', status: 'status', outreachStatus: 'outreach_status' };
+
 document.getElementById('tbody').addEventListener('input', e => {
   const field = e.target.dataset.field;
-  if (!field) return;
+  if (!field || !['role','alumniName','notes'].includes(field)) return;
   const tr = e.target.closest('tr');
   const row = data.find(r => r.id === tr.dataset.id);
   if (!row) return;
   row[field] = e.target.value;
-  save();
+  clearTimeout(row._debounce);
+  row._debounce = setTimeout(() => updateApplication(row.id, { [FIELD_TO_COLUMN[field]]: e.target.value }), 500);
 });
-document.getElementById('tbody').addEventListener('change', e => {
+
+document.getElementById('tbody').addEventListener('change', async e => {
   const field = e.target.dataset.field;
   if (!field) return;
   const tr = e.target.closest('tr');
   const row = data.find(r => r.id === tr.dataset.id);
   if (!row) return;
   row[field] = e.target.value;
+  const patch = { [FIELD_TO_COLUMN[field]]: e.target.value };
   if (field === 'status' && APPLIED_STATUSES.includes(row.status) && !row.dateApplied) {
     row.dateApplied = todayStr();
+    patch.date_applied = row.dateApplied;
   }
   if (field === 'outreachStatus' && SENT_OUTREACH.includes(row.outreachStatus) && !row.outreachDate) {
     row.outreachDate = todayStr();
+    patch.outreach_date = row.outreachDate;
   }
-  save(); render();
+  await updateApplication(row.id, patch);
+  render();
 });
-document.getElementById('tbody').addEventListener('click', e => {
-  if (e.target.dataset.del) {
-    if (confirm('Delete this row?')) {
-      data = data.filter(r => r.id !== e.target.dataset.del);
-      save(); render();
-    }
+
+document.getElementById('tbody').addEventListener('click', async e => {
+  if (e.target.dataset.reset) {
+    if (!confirm('Reset this row to Not Started? (does not delete it)')) return;
+    const row = data.find(r => r.id === e.target.dataset.reset);
+    if (!row) return;
+    row.status = 'Not Started'; row.dateApplied = '';
+    await updateApplication(row.id, { status: 'Not Started', date_applied: null });
+    render();
     return;
   }
   if (e.target.dataset.check) {
@@ -581,7 +625,8 @@ document.getElementById('tbody').addEventListener('click', e => {
     const row = data.find(r => r.id === tr.dataset.id);
     if (!row) return;
     row.lastChecked = todayStr();
-    save(); render();
+    await updateApplication(row.id, { last_checked: row.lastChecked });
+    render();
     return;
   }
   if (e.target.dataset.addPosting) {
@@ -591,48 +636,47 @@ document.getElementById('tbody').addEventListener('click', e => {
     const url = prompt('Posting URL:', 'https://');
     if (!url) return;
     const title = prompt('Short title (e.g. "SDE Intern 2027"):', 'SDE Intern') || 'posting';
-    const deadline = prompt('Application deadline (YYYY-MM-DD), leave blank if unknown:', '') || '';
-    if (!Array.isArray(row.postings)) row.postings = [];
-    row.postings.push({ url, title, deadline });
-    save(); render();
+    const deadline = prompt('Application deadline (YYYY-MM-DD), leave blank if unknown:', '') || null;
+    const { data: inserted, error } = await sb.from('postings').insert({
+      company: row.company, category: row.category, title, url, deadline, source: 'manual',
+    }).select().single();
+    if (error) { alert('Could not add posting: ' + error.message); return; }
+    row.postings.push(inserted);
+    render();
     return;
   }
-  if (e.target.dataset.rmPosting !== undefined) {
-    const tr = e.target.closest('tr');
-    const row = data.find(r => r.id === tr.dataset.id);
-    if (!row) return;
-    row.postings.splice(Number(e.target.dataset.rmPosting), 1);
-    save(); render();
+  if (e.target.dataset.rmPosting) {
+    const postingId = e.target.dataset.rmPosting;
+    const { error } = await sb.from('postings').delete().eq('id', postingId);
+    if (error) { alert('Could not remove posting (may need a delete policy in Supabase): ' + error.message); return; }
+    data.forEach(r => { r.postings = r.postings.filter(p => p.id !== postingId); });
+    render();
   }
 });
 
-document.getElementById('addRowBtn').addEventListener('click', () => {
+document.getElementById('addRowBtn').addEventListener('click', async () => {
   const company = prompt('Company name:');
   if (!company) return;
-  const portal = prompt('Career portal URL (optional):', 'https://') || '';
+  const portal = prompt('Career portal URL (optional):', 'https://') || null;
   const category = prompt('Category (e.g. Voice/Speech AI, Indian Product/Fintech, Global Big Tech, Aggregator Portal):', 'Other') || 'Other';
-  data.push({
-    id: 'row-' + Date.now(),
-    company, portal, category, role: 'SDE Intern / New Grad', postings: [], status: 'Not Started',
-    dateApplied: '', alumniName: '', outreachStatus: 'Not Started', outreachDate: '', lastChecked: '', notes: ''
-  });
-  save(); render();
+  const { data: inserted, error } = await sb.from('applications').insert({
+    user_id: currentUser.id, company, portal_url: portal, category, role: 'SDE Intern / New Grad',
+    status: 'Not Started', outreach_status: 'Not Started',
+  }).select().single();
+  if (error) { alert('Could not add row: ' + error.message); return; }
+  data.push(rowFromApplication(inserted));
+  render();
 });
+
+document.getElementById('syncBtn').addEventListener('click', async () => { await loadAll(); render(); });
 
 document.getElementById('exportJsonBtn').addEventListener('click', () => {
   downloadFile('job-tracker-backup-' + todayStr() + '.json', JSON.stringify(data, null, 2), 'application/json');
 });
 document.getElementById('exportCsvBtn').addEventListener('click', () => {
-  const cols = ['company','category','role','portal','postings','status','dateApplied','alumniName','outreachStatus','outreachDate','lastChecked','notes'];
+  const cols = ['company','category','role','portal','status','dateApplied','alumniName','outreachStatus','outreachDate','lastChecked','notes'];
   const lines = [cols.join(',')];
-  data.forEach(r => {
-    lines.push(cols.map(c => {
-      if (c === 'postings') {
-        return csvEscape((r.postings || []).map(p => `${p.title}|${p.url}|${p.deadline || ''}`).join(' ;; '));
-      }
-      return csvEscape(r[c]);
-    }).join(','));
-  });
+  data.forEach(r => { lines.push(cols.map(c => csvEscape(r[c])).join(',')); });
   downloadFile('job-tracker-' + todayStr() + '.csv', lines.join('\n'), 'text/csv');
 });
 function csvEscape(v) {
@@ -648,34 +692,6 @@ function downloadFile(name, content, type) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
-
-document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
-document.getElementById('importFile').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const imported = JSON.parse(reader.result);
-      if (!Array.isArray(imported)) throw new Error('not an array');
-      if (confirm(`Import ${imported.length} rows? This replaces your current data (export a backup first if unsure).`)) {
-        data = migrate(imported);
-        save(); render();
-      }
-    } catch (err) {
-      alert('Could not parse that file as tracker JSON: ' + err.message);
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-document.getElementById('resetSeedBtn').addEventListener('click', () => {
-  if (confirm('Reset to the original seed list? This discards all current data (export a backup first if unsure).')) {
-    data = makeSeedData();
-    save(); render();
-  }
-});
 
 document.getElementById('searchBox').addEventListener('input', e => { filters.q = e.target.value; render(); });
 document.getElementById('statusFilter').addEventListener('change', e => { filters.status = e.target.value; render(); });
@@ -707,45 +723,9 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
   });
 });
 
-// Pulls postings.json committed by the daily discovery routine. Works from file:// pages because
-// fetch() to a remote https URL isn't subject to the same restriction as fetching local files.
-async function syncFromGitHub(manual) {
-  const line = document.getElementById('syncLine');
-  line.className = 'sync-line';
-  line.textContent = 'Syncing from GitHub...';
-  try {
-    const res = await fetch(GITHUB_POSTINGS_URL + '?t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    let newPostingsCount = 0, companiesTouched = 0;
-    const byCompany = json.companies || {};
-    Object.keys(byCompany).forEach(company => {
-      const row = data.find(r => r.company === company);
-      if (!row) return;
-      const incoming = byCompany[company].postings || [];
-      if (!Array.isArray(row.postings)) row.postings = [];
-      const existingUrls = new Set(row.postings.map(p => p.url));
-      incoming.forEach(p => {
-        if (!existingUrls.has(p.url)) { row.postings.push(p); newPostingsCount++; existingUrls.add(p.url); }
-      });
-      row.lastChecked = byCompany[company].lastChecked || json.generatedAt || row.lastChecked;
-      companiesTouched++;
-    });
-    save(); render();
-    line.className = 'sync-line ok';
-    line.textContent = `Synced from GitHub: ${companiesTouched} companies checked, ${newPostingsCount} new posting(s) added. Report generated ${json.generatedAt || 'unknown time'}.`;
-  } catch (err) {
-    line.className = 'sync-line err';
-    line.textContent = manual
-      ? `Could not sync from GitHub yet (${err.message}). The daily routine may not have pushed a report yet — try again after it runs, or check the repo directly.`
-      : `No GitHub sync data available yet (${err.message}). Using local/seed data only.`;
-  }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
-document.getElementById('syncBtn').addEventListener('click', () => syncFromGitHub(true));
-
-populateFilterSelects();
-render();
-syncFromGitHub(false);
 </script>
 </body>
 </html>
