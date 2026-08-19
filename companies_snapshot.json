@@ -1,0 +1,991 @@
+{
+  "generatedAt": "2026-08-19T20:01:43.940Z",
+  "totalCompanies": 123,
+  "needsWebsearchCount": 86,
+  "companies": [
+    {
+      "company": "Google",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.google.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Microsoft",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.microsoft.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T16:00:52.086+00:00"
+    },
+    {
+      "company": "Amazon",
+      "category": "Global Big Tech",
+      "portal_url": "https://www.amazon.jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Apple",
+      "category": "Global Big Tech",
+      "portal_url": "https://jobs.apple.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Meta",
+      "category": "Global Big Tech",
+      "portal_url": "https://www.metacareers.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Nvidia",
+      "category": "Global Big Tech",
+      "portal_url": "https://www.nvidia.com/en-in/about-nvidia/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Intel",
+      "category": "Global Big Tech",
+      "portal_url": "https://www.intel.com/jobs",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Samsung",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.samsung.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Atlassian",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.atlassian.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "Salesforce",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.salesforce.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "Adobe",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.adobe.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "ServiceNow",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.servicenow.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "SAP",
+      "category": "Global Big Tech",
+      "portal_url": "https://jobs.sap.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "Oracle",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.oracle.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "IBM",
+      "category": "Global Big Tech",
+      "portal_url": "https://www.ibm.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Dell",
+      "category": "Global Big Tech",
+      "portal_url": "https://jobs.dell.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "HP",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.hp.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:36.388+00:00"
+    },
+    {
+      "company": "LinkedIn",
+      "category": "Global Big Tech",
+      "portal_url": "https://careers.linkedin.com",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Netflix",
+      "category": "Global Big Tech",
+      "portal_url": "https://jobs.netflix.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Databricks",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.databricks.com/company/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Snowflake",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.snowflake.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Stripe",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://stripe.com/jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Intuit",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://careers.intuit.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "PayPal",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.paypal.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:52:01.515+00:00"
+    },
+    {
+      "company": "Cloudflare",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.cloudflare.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Okta",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.okta.com/company/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Zscaler",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.zscaler.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "CrowdStrike",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.crowdstrike.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "HashiCorp",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.hashicorp.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "DigitalOcean",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.digitalocean.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "MongoDB",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.mongodb.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Twilio",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.twilio.com/company/jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Dropbox",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.dropbox.com/jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Box",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.box.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Nutanix",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.nutanix.com/company/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Postman",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.postman.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "BrowserStack",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.browserstack.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Datadog",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.datadoghq.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Confluent",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.confluent.io/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Elastic",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.elastic.co/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "GitLab",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://about.gitlab.com/jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Figma",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.figma.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Notion",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.notion.so/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Canva",
+      "category": "Global SaaS/Cloud",
+      "portal_url": "https://www.canva.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Flipkart",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.flipkartcareers.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Razorpay",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://razorpay.com/jobs",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Zomato",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://careers.zomato.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Swiggy",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://careers.swiggy.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "PhonePe",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.phonepe.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Paytm",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://paytm.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Groww",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://groww.in/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Zerodha",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://zerodha.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Freshworks",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.freshworks.com/company/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "CRED",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://careers.cred.club",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Meesho",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://careers.meesho.com",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Urban Company",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://careers.urbancompany.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Slice",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://sliceit.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Juspay",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://juspay.io/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Cashfree Payments",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.cashfree.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Chargebee",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.chargebee.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Zoho",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.zoho.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Darwinbox",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://darwinbox.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Innovaccer",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://innovaccer.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Whatfix",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://whatfix.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "CleverTap",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://clevertap.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "MoEngage",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.moengage.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Rapido",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.rapido.bike/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Porter",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://porter.in/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Delhivery",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://www.delhivery.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Dream11",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://dream11.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Games24x7",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://games24x7.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "upGrad",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://upgrad.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Unacademy",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://unacademy.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Goldman Sachs",
+      "category": "Quant/Finance",
+      "portal_url": "https://www.goldmansachs.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "JP Morgan",
+      "category": "Quant/Finance",
+      "portal_url": "https://careers.jpmorgan.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Morgan Stanley",
+      "category": "Quant/Finance",
+      "portal_url": "https://www.morganstanley.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Optiver",
+      "category": "Quant/Finance",
+      "portal_url": "https://optiver.com/working-at-optiver",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "IMC Trading",
+      "category": "Quant/Finance",
+      "portal_url": "https://www.imc.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "D E Shaw",
+      "category": "Quant/Finance",
+      "portal_url": "https://www.deshawindia.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Uber",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://www.uber.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Airbnb",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://careers.airbnb.com",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Spotify",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://careers.spotify.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Snap",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://careers.snap.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "TikTok",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://careers.tiktok.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "eBay",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://www.ebayinc.com/company/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Walmart",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://careers.walmart.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Pinterest",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://www.pinterestcareers.com",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Coinbase",
+      "category": "Global Consumer Tech",
+      "portal_url": "https://www.coinbase.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "OpenAI",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://openai.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "DeepMind",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://deepmind.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Anthropic",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://www.anthropic.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "HuggingFace",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://huggingface.co/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Scale AI",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://scale.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Palantir",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://www.palantir.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Perplexity AI",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://www.perplexity.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "Cohere",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://cohere.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    },
+    {
+      "company": "xAI",
+      "category": "AI Research/Frontier",
+      "portal_url": "https://x.ai/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Plivo",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.plivo.com/careers/",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Exotel",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://exotel.com/careers/",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Deepgram",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://deepgram.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "AssemblyAI",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.assemblyai.com/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "ElevenLabs",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://elevenlabs.io/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Sarvam AI",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.sarvam.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Ola Krutrim",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://olakrutrim.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Uniphore",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.uniphore.com/careers/",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Observe.AI",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.observe.ai/careers",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Skit.ai",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://skit.ai/careers/",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Gnani.ai",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://gnani.ai/careers/",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Retell AI",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.retellai.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Bland AI",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.bland.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Accenture",
+      "category": "IT Services",
+      "portal_url": "https://www.accenture.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Capgemini",
+      "category": "IT Services",
+      "portal_url": "https://www.capgemini.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Cognizant",
+      "category": "IT Services",
+      "portal_url": "https://careers.cognizant.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "HCL",
+      "category": "IT Services",
+      "portal_url": "https://www.hcltech.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:54:57.445+00:00"
+    },
+    {
+      "company": "Infosys",
+      "category": "IT Services",
+      "portal_url": "https://www.infosys.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "TCS",
+      "category": "IT Services",
+      "portal_url": "https://www.tcs.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Wipro",
+      "category": "IT Services",
+      "portal_url": "https://careers.wipro.com",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Rime",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://rime.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Cartesia",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.cartesia.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Vapi",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://vapi.ai/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "LiveKit",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://livekit.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:50:52.777+00:00"
+    },
+    {
+      "company": "Parloa",
+      "category": "Voice/Speech AI",
+      "portal_url": "https://www.parloa.com/careers/",
+      "covered_by_api": true,
+      "needs_websearch": false,
+      "last_checked_at": "2026-08-19T19:55:50.137+00:00"
+    },
+    {
+      "company": "Navi",
+      "category": "Indian Product/Fintech",
+      "portal_url": "https://navi.com/careers",
+      "covered_by_api": false,
+      "needs_websearch": true,
+      "last_checked_at": "2026-08-19T19:53:41.896+00:00"
+    }
+  ]
+}

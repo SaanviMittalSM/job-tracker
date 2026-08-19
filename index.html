@@ -122,7 +122,6 @@
   .stamp.empty { color: var(--text-dim); }
   .check-btn { background: none; border: 1px dashed var(--border); color: var(--text-dim); border-radius: 5px; font-size: 10px; padding: 1px 5px; cursor: pointer; margin-left: 4px; }
   .auto-badge { font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: .03em; }
-  .signals-wrap { padding: 0 20px 12px; }
   .signal-card {
     display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--accent);
     border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 12px; flex-wrap: wrap;
@@ -131,6 +130,21 @@
   .signal-card .sig-company { font-weight: 700; }
   .signal-card .sig-meta { color: var(--text-dim); font-size: 11px; }
   .signal-card button { font-size: 11px; padding: 5px 10px; }
+  .notif-wrap { position: relative; }
+  .notif-bell { position: relative; font-size: 14px; }
+  .notif-badge {
+    position: absolute; top: -4px; right: -4px; background: var(--red); color: white;
+    font-size: 10px; font-weight: 700; border-radius: 999px; min-width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center; padding: 0 3px;
+  }
+  .notif-panel {
+    position: absolute; top: calc(100% + 6px); right: 0; width: 340px; max-height: 420px; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    padding: 10px; z-index: 20;
+  }
+  .notif-panel .notif-empty { color: var(--text-dim); font-size: 12px; padding: 16px; text-align: center; }
+  .notif-panel .signal-card { flex-direction: column; align-items: stretch; }
+  .notif-panel .signal-card button { align-self: flex-start; }
   .gate {
     display: flex; align-items: center; justify-content: center; min-height: 70vh; padding: 20px;
   }
@@ -167,6 +181,10 @@
   </div>
   <div class="toolbar">
     <span class="user-chip" id="userChip"></span>
+    <div class="notif-wrap">
+      <button class="ghost notif-bell" id="notifBell" title="Notifications">🔔<span class="notif-badge" id="notifBadge" style="display:none">0</span></button>
+      <div class="notif-panel" id="notifPanel" style="display:none"></div>
+    </div>
     <button id="syncBtn">🔄 Refresh</button>
     <button id="addRowBtn">+ Add Row</button>
     <button class="secondary" id="exportJsonBtn">Export JSON</button>
@@ -176,8 +194,6 @@
 </header>
 
 <div class="sync-line" id="syncLine">Loading...</div>
-
-<div id="signalsPanel"></div>
 
 <div class="stats" id="statsBar"></div>
 
@@ -312,8 +328,11 @@ async function loadAll() {
   (checksRes.data || []).forEach(c => { checksByCompany[c.company] = c; });
 
   data = (appsRes.data || []).map(rowFromApplication);
+  const previousSignalIds = new Set(gmailSignals.map(s => s.id));
   gmailSignals = signalsRes.data || [];
-  renderSignals();
+  const newSignals = gmailSignals.filter(s => !previousSignalIds.has(s.id));
+  renderNotifications();
+  if (newSignals.length) notifyNewSignals(newSignals);
 
   const postingsCount = (postingsRes.data || []).length;
   line.className = 'sync-line ok';
@@ -325,24 +344,54 @@ const SIGNAL_TO_STATUS = {
   offer: 'Offer', rejected: 'Rejected',
 };
 
-function renderSignals() {
-  const panel = document.getElementById('signalsPanel');
-  if (!gmailSignals.length) { panel.innerHTML = ''; return; }
-  panel.innerHTML = `<div class="signals-wrap">` + gmailSignals.map(s => {
+// ---------- Notification center ----------
+function renderNotifications() {
+  const badge = document.getElementById('notifBadge');
+  const panel = document.getElementById('notifPanel');
+  const count = gmailSignals.length;
+  badge.style.display = count ? 'flex' : 'none';
+  badge.textContent = count > 9 ? '9+' : String(count);
+
+  if (!count) {
+    panel.innerHTML = `<div class="notif-empty">No new responses detected. We'll notify you here when the daily Gmail scan finds one.</div>`;
+    return;
+  }
+  panel.innerHTML = gmailSignals.map(s => {
     const match = data.find(r => r.company.toLowerCase() === s.company.toLowerCase() || r.company.toLowerCase().includes(s.company.toLowerCase()) || s.company.toLowerCase().includes(r.company.toLowerCase()));
     const suggestedStatus = SIGNAL_TO_STATUS[s.signal] || null;
     return `<div class="signal-card">
       <div class="sig-main">
-        📧 Gmail found: <span class="sig-company">${escHtml(s.company)}</span> — ${escHtml(s.signal)} on ${escHtml(s.date)}
+        📧 <span class="sig-company">${escHtml(s.company)}</span> — ${escHtml(s.signal)} on ${escHtml(s.date)}
         <div class="sig-meta">${escHtml(s.subject || '')} ${match ? '' : '(no matching row — dismiss or add this company first)'}</div>
       </div>
       ${match && suggestedStatus ? `<button data-accept-signal="${s.id}" data-match-id="${match.id}" data-status="${suggestedStatus}">Apply: set ${escHtml(match.company)} → ${suggestedStatus}</button>` : ''}
       <button class="ghost" data-dismiss-signal="${s.id}">Dismiss</button>
     </div>`;
-  }).join('') + `</div>`;
+  }).join('');
 }
 
-document.getElementById('signalsPanel').addEventListener('click', async e => {
+function notifyNewSignals(newSignals) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const body = newSignals.length === 1
+    ? `${newSignals[0].company}: ${newSignals[0].signal} — ${newSignals[0].subject || ''}`
+    : `${newSignals.length} new responses, including ${newSignals[0].company}`;
+  new Notification('Job Tracker: new email response', { body, icon: './icon.svg' });
+}
+
+document.getElementById('notifBell').addEventListener('click', async () => {
+  const panel = document.getElementById('notifPanel');
+  const opening = panel.style.display === 'none';
+  panel.style.display = opening ? 'block' : 'none';
+  if (opening && 'Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+});
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.notif-wrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('notifPanel').style.display = 'none';
+});
+
+document.getElementById('notifPanel').addEventListener('click', async e => {
   if (e.target.dataset.acceptSignal) {
     const signalId = e.target.dataset.acceptSignal;
     const matchId = e.target.dataset.matchId;
@@ -356,13 +405,13 @@ document.getElementById('signalsPanel').addEventListener('click', async e => {
     }
     await sb.from('gmail_signals').update({ dismissed: true }).eq('id', signalId);
     gmailSignals = gmailSignals.filter(s => s.id !== signalId);
-    renderSignals(); render();
+    renderNotifications(); render();
   }
   if (e.target.dataset.dismissSignal) {
     const signalId = e.target.dataset.dismissSignal;
     await sb.from('gmail_signals').update({ dismissed: true }).eq('id', signalId);
     gmailSignals = gmailSignals.filter(s => s.id !== signalId);
-    renderSignals();
+    renderNotifications();
   }
 });
 
