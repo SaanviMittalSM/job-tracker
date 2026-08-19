@@ -217,136 +217,10 @@ const APPLIED_STATUSES = ['Applied','OA/Assessment','Phone Screen','Interview','
 const SENT_OUTREACH = ['Sent','Responded - Positive','Responded - No Referral','No Response'];
 const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian Product/Fintech','Global SaaS/Cloud'];
 
-const SEED = [
-["Google","https://careers.google.com","Global Big Tech"],
-["Microsoft","https://careers.microsoft.com","Global Big Tech"],
-["Amazon","https://www.amazon.jobs","Global Big Tech"],
-["Apple","https://jobs.apple.com","Global Big Tech"],
-["Meta","https://www.metacareers.com","Global Big Tech"],
-["Nvidia","https://www.nvidia.com/en-in/about-nvidia/careers","Global Big Tech"],
-["Intel","https://www.intel.com/jobs","Global Big Tech"],
-["Samsung","https://careers.samsung.com","Global Big Tech"],
-["Atlassian","https://careers.atlassian.com","Global Big Tech"],
-["Salesforce","https://careers.salesforce.com","Global Big Tech"],
-["Adobe","https://careers.adobe.com","Global Big Tech"],
-["ServiceNow","https://careers.servicenow.com","Global Big Tech"],
-["SAP","https://jobs.sap.com","Global Big Tech"],
-["Oracle","https://careers.oracle.com","Global Big Tech"],
-["IBM","https://www.ibm.com/careers","Global Big Tech"],
-["Dell","https://jobs.dell.com","Global Big Tech"],
-["HP","https://careers.hp.com","Global Big Tech"],
-["LinkedIn","https://careers.linkedin.com","Global Big Tech"],
-["Netflix","https://jobs.netflix.com","Global Big Tech"],
-["Databricks","https://www.databricks.com/company/careers","Global SaaS/Cloud"],
-["Snowflake","https://www.snowflake.com/careers","Global SaaS/Cloud"],
-["Stripe","https://stripe.com/jobs","Global SaaS/Cloud"],
-["Intuit","https://careers.intuit.com","Global SaaS/Cloud"],
-["PayPal","https://www.paypal.com/careers","Global SaaS/Cloud"],
-["Cloudflare","https://www.cloudflare.com/careers","Global SaaS/Cloud"],
-["Okta","https://www.okta.com/company/careers","Global SaaS/Cloud"],
-["Zscaler","https://www.zscaler.com/careers","Global SaaS/Cloud"],
-["CrowdStrike","https://www.crowdstrike.com/careers","Global SaaS/Cloud"],
-["HashiCorp","https://www.hashicorp.com/careers","Global SaaS/Cloud"],
-["DigitalOcean","https://www.digitalocean.com/careers","Global SaaS/Cloud"],
-["MongoDB","https://www.mongodb.com/careers","Global SaaS/Cloud"],
-["Twilio","https://www.twilio.com/company/jobs","Global SaaS/Cloud"],
-["Dropbox","https://www.dropbox.com/jobs","Global SaaS/Cloud"],
-["Box","https://www.box.com/careers","Global SaaS/Cloud"],
-["Nutanix","https://www.nutanix.com/company/careers","Global SaaS/Cloud"],
-["Postman","https://www.postman.com/careers","Global SaaS/Cloud"],
-["BrowserStack","https://www.browserstack.com/careers","Global SaaS/Cloud"],
-["Datadog","https://www.datadoghq.com/careers","Global SaaS/Cloud"],
-["Confluent","https://www.confluent.io/careers","Global SaaS/Cloud"],
-["Elastic","https://www.elastic.co/careers","Global SaaS/Cloud"],
-["GitLab","https://about.gitlab.com/jobs","Global SaaS/Cloud"],
-["Figma","https://www.figma.com/careers","Global SaaS/Cloud"],
-["Notion","https://www.notion.so/careers","Global SaaS/Cloud"],
-["Canva","https://www.canva.com/careers","Global SaaS/Cloud"],
-["Flipkart","https://www.flipkartcareers.com","Indian Product/Fintech"],
-["Razorpay","https://razorpay.com/jobs","Indian Product/Fintech"],
-["Zomato","https://careers.zomato.com","Indian Product/Fintech"],
-["Swiggy","https://careers.swiggy.com","Indian Product/Fintech"],
-["PhonePe","https://www.phonepe.com/careers","Indian Product/Fintech"],
-["Paytm","https://paytm.com/careers","Indian Product/Fintech"],
-["Groww","https://groww.in/careers","Indian Product/Fintech"],
-["Zerodha","https://zerodha.com/careers","Indian Product/Fintech"],
-["Freshworks","https://www.freshworks.com/company/careers","Indian Product/Fintech"],
-["CRED","https://careers.cred.club","Indian Product/Fintech"],
-["Meesho","https://careers.meesho.com","Indian Product/Fintech"],
-["Urban Company","https://careers.urbancompany.com","Indian Product/Fintech"],
-["Slice","https://sliceit.com/careers","Indian Product/Fintech"],
-["Juspay","https://juspay.io/careers","Indian Product/Fintech"],
-["Cashfree Payments","https://www.cashfree.com/careers","Indian Product/Fintech"],
-["Chargebee","https://www.chargebee.com/careers","Indian Product/Fintech"],
-["Zoho","https://www.zoho.com/careers","Indian Product/Fintech"],
-["Darwinbox","https://darwinbox.com/careers","Indian Product/Fintech"],
-["Innovaccer","https://innovaccer.com/careers","Indian Product/Fintech"],
-["Whatfix","https://whatfix.com/careers","Indian Product/Fintech"],
-["CleverTap","https://clevertap.com/careers","Indian Product/Fintech"],
-["MoEngage","https://www.moengage.com/careers","Indian Product/Fintech"],
-["Rapido","https://www.rapido.bike/careers","Indian Product/Fintech"],
-["Porter","https://porter.in/careers","Indian Product/Fintech"],
-["Delhivery","https://www.delhivery.com/careers","Indian Product/Fintech"],
-["Dream11","https://dream11.com/careers","Indian Product/Fintech"],
-["Games24x7","https://games24x7.com/careers","Indian Product/Fintech"],
-["upGrad","https://upgrad.com/careers","Indian Product/Fintech"],
-["Unacademy","https://unacademy.com/careers","Indian Product/Fintech"],
-["Goldman Sachs","https://www.goldmansachs.com/careers","Quant/Finance"],
-["JP Morgan","https://careers.jpmorgan.com","Quant/Finance"],
-["Morgan Stanley","https://www.morganstanley.com/careers","Quant/Finance"],
-["Optiver","https://optiver.com/working-at-optiver","Quant/Finance"],
-["IMC Trading","https://www.imc.com/careers","Quant/Finance"],
-["D E Shaw","https://www.deshawindia.com/careers","Quant/Finance"],
-["Uber","https://www.uber.com/careers","Global Consumer Tech"],
-["Airbnb","https://careers.airbnb.com","Global Consumer Tech"],
-["Spotify","https://careers.spotify.com","Global Consumer Tech"],
-["Snap","https://careers.snap.com","Global Consumer Tech"],
-["TikTok","https://careers.tiktok.com","Global Consumer Tech"],
-["eBay","https://www.ebayinc.com/company/careers","Global Consumer Tech"],
-["Walmart","https://careers.walmart.com","Global Consumer Tech"],
-["Pinterest","https://www.pinterestcareers.com","Global Consumer Tech"],
-["Coinbase","https://www.coinbase.com/careers","Global Consumer Tech"],
-["OpenAI","https://openai.com/careers","AI Research/Frontier"],
-["DeepMind","https://deepmind.com/careers","AI Research/Frontier"],
-["Anthropic","https://www.anthropic.com/careers","AI Research/Frontier"],
-["HuggingFace","https://huggingface.co/careers","AI Research/Frontier"],
-["Scale AI","https://scale.com/careers","AI Research/Frontier"],
-["Palantir","https://www.palantir.com/careers","AI Research/Frontier"],
-["Perplexity AI","https://www.perplexity.ai/careers","AI Research/Frontier"],
-["Cohere","https://cohere.com/careers","AI Research/Frontier"],
-["xAI","https://x.ai/careers","AI Research/Frontier"],
-["Plivo","https://www.plivo.com/careers/","Voice/Speech AI"],
-["Exotel","https://exotel.com/careers/","Voice/Speech AI"],
-["Deepgram","https://deepgram.com/careers","Voice/Speech AI"],
-["AssemblyAI","https://www.assemblyai.com/careers","Voice/Speech AI"],
-["ElevenLabs","https://elevenlabs.io/careers","Voice/Speech AI"],
-["Sarvam AI","https://www.sarvam.ai/careers","Voice/Speech AI"],
-["Ola Krutrim","https://olakrutrim.com/careers","Voice/Speech AI"],
-["Uniphore","https://www.uniphore.com/careers/","Voice/Speech AI"],
-["Observe.AI","https://www.observe.ai/careers","Voice/Speech AI"],
-["Skit.ai","https://skit.ai/careers/","Voice/Speech AI"],
-["Gnani.ai","https://gnani.ai/careers/","Voice/Speech AI"],
-["Retell AI","https://www.retellai.com/careers","Voice/Speech AI"],
-["Bland AI","https://www.bland.ai/careers","Voice/Speech AI"],
-["Accenture","https://www.accenture.com/careers","IT Services"],
-["Capgemini","https://www.capgemini.com/careers","IT Services"],
-["Cognizant","https://careers.cognizant.com","IT Services"],
-["HCL","https://www.hcltech.com/careers","IT Services"],
-["Infosys","https://www.infosys.com/careers","IT Services"],
-["TCS","https://www.tcs.com/careers","IT Services"],
-["Wipro","https://careers.wipro.com","IT Services"],
-["LinkedIn Jobs (search)","https://www.linkedin.com/jobs/","Aggregator Portal"],
-["Glassdoor (search)","https://www.glassdoor.co.in/Job/index.htm","Aggregator Portal"],
-["Naukri","https://www.naukri.com","Aggregator Portal"],
-["Wellfound (AngelList)","https://wellfound.com","Aggregator Portal"],
-["Instahyre","https://www.instahyre.com","Aggregator Portal"],
-["Cutshort","https://cutshort.io","Aggregator Portal"],
-["Hirist","https://www.hirist.tech","Aggregator Portal"],
-["Internshala","https://internshala.com","Aggregator Portal"],
-["SpeechTechJobs (ASR/Voice niche)","https://speechtechjobs.com","Aggregator Portal"],
-["Y Combinator Work at a Startup","https://www.workatastartup.com","Aggregator Portal"],
-["iimjobs","https://www.iimjobs.com","Aggregator Portal"]
-];
+
+// Company list now lives in Supabase (companies table) instead of being hardcoded,
+// so the discovery routine (and the + Add Row button) can grow it over time.
+let COMPANIES = [];
 
 let currentUser = null;
 let data = [];           // merged view-model rows, one per company
@@ -377,19 +251,28 @@ document.getElementById('signOutBtn').addEventListener('click', () => sb.auth.si
 
 // ---------- Boot / data loading ----------
 async function boot() {
+  await loadCompanies();
   await ensureApplicationsSeeded();
   await loadAll();
   populateFilterSelects();
   render();
 }
 
+async function loadCompanies() {
+  const { data: companies, error } = await sb.from('companies').select('*');
+  if (error) { console.error('failed to load companies', error); COMPANIES = []; return; }
+  COMPANIES = companies || [];
+}
+
+// Re-diffs against the live companies list every boot, so companies added later
+// (by the discovery routine, or another user via + Add Row) get picked up automatically.
 async function ensureApplicationsSeeded() {
   const { data: existing, error } = await sb.from('applications').select('company').eq('user_id', currentUser.id);
   if (error) { console.error(error); return; }
   const have = new Set((existing || []).map(r => r.company));
-  const missing = SEED.filter(([company]) => !have.has(company)).map(([company, portal, category]) => ({
-    user_id: currentUser.id, company, category: category || 'Other', portal_url: portal,
-    role: category === 'Aggregator Portal' ? 'Search / monitor for new postings' : 'SDE Intern / New Grad',
+  const missing = COMPANIES.filter(c => !have.has(c.company)).map(c => ({
+    user_id: currentUser.id, company: c.company, category: c.category || 'Other', portal_url: c.portal_url,
+    role: c.role_hint || 'SDE Intern / New Grad',
     status: 'Not Started', outreach_status: 'Not Started',
   }));
   if (missing.length) {
@@ -659,6 +542,9 @@ document.getElementById('addRowBtn').addEventListener('click', async () => {
   if (!company) return;
   const portal = prompt('Career portal URL (optional):', 'https://') || null;
   const category = prompt('Category (e.g. Voice/Speech AI, Indian Product/Fintech, Global Big Tech, Aggregator Portal):', 'Other') || 'Other';
+  // Register into the shared companies list too (ignoring conflict if it already exists),
+  // so this company shows up for every user going forward, not just this session.
+  await sb.from('companies').insert({ company, portal_url: portal, category, added_source: 'manual' }).select();
   const { data: inserted, error } = await sb.from('applications').insert({
     user_id: currentUser.id, company, portal_url: portal, category, role: 'SDE Intern / New Grad',
     status: 'Not Started', outreach_status: 'Not Started',
