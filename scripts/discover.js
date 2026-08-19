@@ -36,10 +36,11 @@ const LEVER = {
 };
 
 const INDIA_RE = /\bindia\b|bengaluru|bangalore|hyderabad|\bpune\b|gurgaon|gurugram|\bnoida\b|\bmumbai\b|\bchennai\b|delhi ncr/i;
-const ROLE_RE = /engineer|developer|\bsde\b|software|\bswe\b|programmer/i;
+// Broadened beyond pure SDE titles: ML/AI, data, backend/full-stack, cloud/DevOps/SRE, QA, and general IT/tech roles.
+const ROLE_RE = /engineer|developer|\bsde\b|software|\bswe\b|programmer|\bml\b|machine learning|\bai\b|artificial intelligence|data scientist|data engineer|backend|back-end|full.?stack|\bcloud\b|devops|\bsre\b|site reliability|platform engineer|infrastructure|\bqa\b|sdet|test engineer|mlops|applied scientist|research engineer|systems engineer|information technology|\bit\b support|network engineer/i;
 const SENIOR_RE = /senior|\bsr\.?\b|staff|principal|director|\bvp\b|vice president|head of|distinguished|architect|manager|\blead\b|\bii\b|\biii\b|\biv\b|\b[2-9]\+? ?years?\b/i;
-const ENTRY_RE = /intern|new grad|university grad|graduate program|entry.level|associate|\bsde ?1\b|\bsde ?i\b|software engineer i\b|early career|campus/i;
-const NON_SDE_RE = /sales engineer|solutions engineer|support engineer|technical support|customer engineer|success engineer|escalation engineer|\bengineer,? india\b/i;
+const ENTRY_RE = /intern|new grad|university grad|graduate program|entry.level|associate|junior|\bsde ?1\b|\bsde ?i\b|software engineer i\b|early career|campus/i;
+const NON_SDE_RE = /sales engineer|solutions engineer|support engineer|technical support|customer engineer|success engineer|escalation engineer|\bengineer,? india\b|finance|treasury|billing|sales consultant|enterprise sales|marketing|recruiter|talent acquisition|hr business partner|\blegal\b|accounting/i;
 
 function isEntryLevel(title) {
   if (!ROLE_RE.test(title) || NON_SDE_RE.test(title)) return false;
@@ -92,6 +93,21 @@ async function supabaseUpsert(table, rows, conflictCols) {
   }
 }
 
+async function supabaseDelete(table, filterQuery) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filterQuery}`, {
+    method: 'DELETE',
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      Prefer: 'return=minimal',
+    },
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Supabase delete from ${table} failed: HTTP ${res.status} ${body}`);
+  }
+}
+
 async function main() {
   const now = new Date().toISOString();
   const postingRows = [];
@@ -122,6 +138,11 @@ async function main() {
 
   await processSource(GREENHOUSE, discoverGreenhouse);
   await processSource(LEVER, discoverLever);
+
+  // Replace semantics for the companies this script owns: clears postings that closed or
+  // no longer match the filter, instead of accumulating stale rows forever via upsert-only.
+  const ownedCompanies = [...Object.values(GREENHOUSE), ...Object.values(LEVER)].map(([name]) => name);
+  await supabaseDelete('postings', `company=in.(${ownedCompanies.map(c => `"${c}"`).join(',')})&source=in.(greenhouse,lever)`);
 
   await supabaseUpsert('company_checks', checkRows, 'company');
   await supabaseUpsert('postings', postingRows, 'company,url');
