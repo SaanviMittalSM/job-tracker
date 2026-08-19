@@ -1,0 +1,228 @@
+{
+  "generatedAt": "2026-08-19T09:51:46.843Z",
+  "companies": {
+    "Anthropic": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Figma": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Databricks": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Scale AI": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "AssemblyAI": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Stripe": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://stripe.com/jobs/search?gh_jid=8031833",
+          "title": "Software Engineer, Intern",
+          "deadline": ""
+        },
+        {
+          "url": "https://stripe.com/jobs/search?gh_jid=7543868",
+          "title": "Software Engineer, Internal Systems",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Slice": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "GitLab": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://job-boards.greenhouse.io/gitlab/jobs/8556658002",
+          "title": "AI Engineer",
+          "deadline": ""
+        },
+        {
+          "url": "https://job-boards.greenhouse.io/gitlab/jobs/8695515002",
+          "title": "Backend Engineer, Geo Team",
+          "deadline": ""
+        },
+        {
+          "url": "https://job-boards.greenhouse.io/gitlab/jobs/8686962002",
+          "title": "Intermediate Backend Engineer",
+          "deadline": ""
+        },
+        {
+          "url": "https://job-boards.greenhouse.io/gitlab/jobs/8623751002",
+          "title": "Intermediate Fullstack Engineer - Data Products",
+          "deadline": ""
+        },
+        {
+          "url": "https://job-boards.greenhouse.io/gitlab/jobs/8705011002",
+          "title": "RPA Engineer, UiPath",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Elastic": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "MongoDB": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://www.mongodb.com/careers/job/?gh_jid=7943868",
+          "title": "Engineer 3 - GTM Tech",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.mongodb.com/careers/job/?gh_jid=7779016",
+          "title": "Salesforce CPQ engineer 3",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.mongodb.com/careers/job/?gh_jid=7993984",
+          "title": "Software Engineer 3",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.mongodb.com/careers/job/?gh_jid=8083366",
+          "title": "Software Engineer 3",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.mongodb.com/careers/job/?gh_jid=8007613",
+          "title": "Technical Services Engineer",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Cloudflare": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Okta": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://www.okta.com/company/careers/opportunity/8132173?gh_jid=8132173",
+          "title": " IT Automation and AI Engineer ",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.okta.com/company/careers/opportunity/7727730?gh_jid=7727730",
+          "title": "ServiceNow Developer SAM",
+          "deadline": ""
+        },
+        {
+          "url": "https://www.okta.com/company/careers/opportunity/7984479?gh_jid=7984479",
+          "title": "Software Engineer-Full Stack",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Zscaler": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://job-boards.greenhouse.io/zscaler/jobs/5085021007",
+          "title": "Engineer, Center of Excellence",
+          "deadline": ""
+        },
+        {
+          "url": "https://job-boards.greenhouse.io/zscaler/jobs/5190485007",
+          "title": "Information Systems Engineer",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Twilio": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://job-boards.greenhouse.io/twilio/jobs/8048659",
+          "title": "Associate Application Engineer",
+          "deadline": ""
+        }
+      ],
+      "source": "greenhouse"
+    },
+    "Dropbox": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Postman": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "xAI": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "greenhouse"
+    },
+    "Plivo": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "lever"
+    },
+    "CRED": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://jobs.lever.co/cred/58dfc330-090b-4318-a395-cc7280cf5065",
+          "title": "web developer - Prefr",
+          "deadline": ""
+        }
+      ],
+      "source": "lever"
+    },
+    "Meesho": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [
+        {
+          "url": "https://jobs.lever.co/meesho/fe839191-1761-4094-9d3c-4d554904b84d",
+          "title": "Automation engineer (Warehouse Automation)",
+          "deadline": ""
+        },
+        {
+          "url": "https://jobs.lever.co/meesho/c49e13f6-f027-42f3-98b5-745d83997cbf",
+          "title": "GTM Engineer – Meesho AI Services (MAS)",
+          "deadline": ""
+        }
+      ],
+      "source": "lever"
+    },
+    "Porter": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "lever"
+    },
+    "Freshworks": {
+      "lastChecked": "2026-08-19T09:51:46.843Z",
+      "postings": [],
+      "source": "lever"
+    }
+  }
+}

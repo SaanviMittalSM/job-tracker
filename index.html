@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Job Application Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --border: #dde1e6;
+    --text: #1c1f24;
+    --text-dim: #6b7280;
+    --accent: #2f6fed;
+    --green: #1e8e3e;
+    --green-bg: #e6f4ea;
+    --yellow: #b06a00;
+    --yellow-bg: #fff4e0;
+    --red: #c5221f;
+    --red-bg: #fce8e6;
+    --row-alt: #fafbfc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --panel: #1c1f24;
+      --border: #2c3138;
+      --text: #e8eaed;
+      --text-dim: #9aa0a6;
+      --accent: #6ea8fe;
+      --green: #6bd18a;
+      --green-bg: #163524;
+      --yellow: #ffcb7a;
+      --yellow-bg: #3a2c0f;
+      --red: #ff9a94;
+      --red-bg: #3a1a18;
+      --row-alt: #1f2329;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+  }
+  header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { font-size: 18px; margin: 0; }
+  header .sub { color: var(--text-dim); font-size: 12px; margin-top: 2px; }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button, .btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  button.ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  input[type=file] { display: none; }
+  .stats {
+    display: flex;
+    gap: 10px;
+    padding: 12px 20px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    min-width: 90px;
+  }
+  .stat .num { font-size: 20px; font-weight: 700; }
+  .stat .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; }
+  .sync-line { padding: 0 20px 10px; color: var(--text-dim); font-size: 11px; }
+  .sync-line.ok { color: var(--green); }
+  .sync-line.err { color: var(--yellow); }
+  .controls {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .controls input[type=text], .controls select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 12px;
+  }
+  main { padding: 0 20px 40px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 1500px; background: var(--panel); border-radius: 8px; overflow: hidden; }
+  th, td { border-bottom: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: middle; white-space: nowrap; }
+  th { position: sticky; top: 0; background: var(--panel); cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-dim); z-index: 1; }
+  th:hover { color: var(--accent); }
+  tr:nth-child(even) td { background: var(--row-alt); }
+  tr.stale td { box-shadow: inset 3px 0 0 var(--yellow); }
+  td input[type=text], td select, td textarea {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text);
+    font-size: 12px;
+    padding: 3px 4px;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+  td input[type=text]:hover, td select:hover, td textarea:hover,
+  td input[type=text]:focus, td select:focus, td textarea:focus {
+    border-color: var(--border);
+    background: var(--bg);
+  }
+  td.notes textarea { min-width: 160px; resize: vertical; white-space: normal; }
+  .role-col input { min-width: 130px; }
+  .company-cell { font-weight: 600; white-space: nowrap; }
+  .company-cell a { color: var(--accent); text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 4px; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .chip.dim { background: var(--bg); color: var(--text-dim); }
+  .del-btn { background: transparent; color: var(--red); border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; }
+  footer { padding: 10px 20px 30px; color: var(--text-dim); font-size: 11px; }
+  .postings-cell { min-width: 220px; white-space: normal; }
+  .posting-item { display: flex; align-items: center; gap: 4px; padding: 2px 0; }
+  .posting-item a { color: var(--accent); text-decoration: none; font-size: 11px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .posting-rm { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 11px; padding: 0 3px; }
+  .deadline-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600; }
+  .deadline-badge.urgent { background: var(--red-bg); color: var(--red); }
+  .deadline-badge.soon { background: var(--yellow-bg); color: var(--yellow); }
+  .deadline-badge.ok { background: var(--green-bg); color: var(--green); }
+  .add-posting-btn { background: none; border: 1px dashed var(--border); color: var(--text-dim); border-radius: 5px; font-size: 10px; padding: 2px 6px; cursor: pointer; margin-top: 2px; }
+  .stamp { font-size: 12px; }
+  .stamp.empty { color: var(--text-dim); }
+  .check-btn { background: none; border: 1px dashed var(--border); color: var(--text-dim); border-radius: 5px; font-size: 10px; padding: 1px 5px; cursor: pointer; margin-left: 4px; }
+  .auto-badge { font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: .03em; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Job Application Tracker</h1>
+    <div class="sub">Status/outreach fields save to local storage. Applied &amp; outreach dates auto-stamp from status changes — no manual date entry.</div>
+  </div>
+  <div class="toolbar">
+    <button id="syncBtn">🔄 Sync from GitHub</button>
+    <button id="addRowBtn">+ Add Row</button>
+    <button class="secondary" id="exportJsonBtn">Export JSON</button>
+    <button class="secondary" id="exportCsvBtn">Export CSV</button>
+    <button class="secondary" id="importBtn">Import JSON</button>
+    <input type="file" id="importFile" accept="application/json">
+    <button class="ghost" id="resetSeedBtn">Reset to Seed List</button>
+  </div>
+</header>
+
+<div class="sync-line" id="syncLine">Not synced from GitHub yet.</div>
+
+<div class="stats" id="statsBar"></div>
+
+<div class="controls">
+  <input type="text" id="searchBox" placeholder="Search company / role / notes...">
+  <select id="statusFilter"><option value="">All statuses</option></select>
+  <select id="outreachFilter"><option value="">All outreach states</option></select>
+  <select id="categoryFilter"><option value="">All categories</option></select>
+  <button class="ghost" id="rotationBtn">Show stale queue (oldest synced/checked first)</button>
+  <button class="ghost" id="clearFiltersBtn">Clear filters</button>
+</div>
+
+<main>
+<table>
+  <thead>
+    <tr>
+      <th data-sort="company">Company</th>
+      <th data-sort="category">Category</th>
+      <th data-sort="role">Role</th>
+      <th>Postings (auto + manual links)</th>
+      <th data-sort="status">Status</th>
+      <th data-sort="dateApplied">Applied</th>
+      <th data-sort="alumniName">Alumni Contact</th>
+      <th data-sort="outreachStatus">Outreach</th>
+      <th data-sort="outreachDate">Outreach Sent</th>
+      <th data-sort="lastChecked">Last Synced/Checked</th>
+      <th>Notes</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</main>
+
+<footer>
+  Seeded with 100+ companies across Global Big Tech, Global SaaS/Cloud, Indian Product/Fintech, Quant/Finance, AI Research/Frontier, Voice/Speech AI, IT Services, plus job aggregator portals. The Voice/Speech AI, AI Research/Frontier, and Indian Product/Fintech tiers are auto-scanned daily by a scheduled discovery agent and synced from GitHub (<a href="https://github.com/SaanviMittalSM/job-application-tracker" target="_blank" rel="noopener">SaanviMittalSM/job-application-tracker</a>); other rows use the manual "check" button. Edit Status/Outreach/Alumni/Notes inline — dates auto-stamp when you move a status forward. See README.md for the alumni outreach workflow and message templates.
+</footer>
+
+<script>
+const STATUS_OPTS = ['Not Started','Researching','Applied','OA/Assessment','Phone Screen','Interview','Offer','Rejected','Withdrawn'];
+const OUTREACH_OPTS = ['Not Started','Alumni Identified','Message Drafted','Sent','Responded - Positive','Responded - No Referral','No Response','N/A'];
+const APPLIED_STATUSES = ['Applied','OA/Assessment','Phone Screen','Interview','Offer','Rejected','Withdrawn'];
+const SENT_OUTREACH = ['Sent','Responded - Positive','Responded - No Referral','No Response'];
+const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian Product/Fintech'];
+const GITHUB_POSTINGS_URL = 'https://raw.githubusercontent.com/SaanviMittalSM/job-application-tracker/main/postings.json';
+
+const SEED = [
+["Google","https://careers.google.com","Global Big Tech"],
+["Microsoft","https://careers.microsoft.com","Global Big Tech"],
+["Amazon","https://www.amazon.jobs","Global Big Tech"],
+["Apple","https://jobs.apple.com","Global Big Tech"],
+["Meta","https://www.metacareers.com","Global Big Tech"],
+["Nvidia","https://www.nvidia.com/en-in/about-nvidia/careers","Global Big Tech"],
+["Intel","https://www.intel.com/jobs","Global Big Tech"],
+["Samsung","https://careers.samsung.com","Global Big Tech"],
+["Atlassian","https://careers.atlassian.com","Global Big Tech"],
+["Salesforce","https://careers.salesforce.com","Global Big Tech"],
+["Adobe","https://careers.adobe.com","Global Big Tech"],
+["ServiceNow","https://careers.servicenow.com","Global Big Tech"],
+["SAP","https://jobs.sap.com","Global Big Tech"],
+["Oracle","https://careers.oracle.com","Global Big Tech"],
+["IBM","https://www.ibm.com/careers","Global Big Tech"],
+["Dell","https://jobs.dell.com","Global Big Tech"],
+["HP","https://careers.hp.com","Global Big Tech"],
+["LinkedIn","https://careers.linkedin.com","Global Big Tech"],
+["Netflix","https://jobs.netflix.com","Global Big Tech"],
+["Databricks","https://www.databricks.com/company/careers","Global SaaS/Cloud"],
+["Snowflake","https://www.snowflake.com/careers","Global SaaS/Cloud"],
+["Stripe","https://stripe.com/jobs","Global SaaS/Cloud"],
+["Intuit","https://careers.intuit.com","Global SaaS/Cloud"],
+["PayPal","https://www.paypal.com/careers","Global SaaS/Cloud"],
+["Cloudflare","https://www.cloudflare.com/careers","Global SaaS/Cloud"],
+["Okta","https://www.okta.com/company/careers","Global SaaS/Cloud"],
+["Zscaler","https://www.zscaler.com/careers","Global SaaS/Cloud"],
+["CrowdStrike","https://www.crowdstrike.com/careers","Global SaaS/Cloud"],
+["HashiCorp","https://www.hashicorp.com/careers","Global SaaS/Cloud"],
+["DigitalOcean","https://www.digitalocean.com/careers","Global SaaS/Cloud"],
+["MongoDB","https://www.mongodb.com/careers","Global SaaS/Cloud"],
+["Twilio","https://www.twilio.com/company/jobs","Global SaaS/Cloud"],
+["Dropbox","https://www.dropbox.com/jobs","Global SaaS/Cloud"],
+["Box","https://www.box.com/careers","Global SaaS/Cloud"],
+["Nutanix","https://www.nutanix.com/company/careers","Global SaaS/Cloud"],
+["Postman","https://www.postman.com/careers","Global SaaS/Cloud"],
+["BrowserStack","https://www.browserstack.com/careers","Global SaaS/Cloud"],
+["Datadog","https://www.datadoghq.com/careers","Global SaaS/Cloud"],
+["Confluent","https://www.confluent.io/careers","Global SaaS/Cloud"],
+["Elastic","https://www.elastic.co/careers","Global SaaS/Cloud"],
+["GitLab","https://about.gitlab.com/jobs","Global SaaS/Cloud"],
+["Figma","https://www.figma.com/careers","Global SaaS/Cloud"],
+["Notion","https://www.notion.so/careers","Global SaaS/Cloud"],
+["Canva","https://www.canva.com/careers","Global SaaS/Cloud"],
+["Flipkart","https://www.flipkartcareers.com","Indian Product/Fintech"],
+["Razorpay","https://razorpay.com/jobs","Indian Product/Fintech"],
+["Zomato","https://careers.zomato.com","Indian Product/Fintech"],
+["Swiggy","https://careers.swiggy.com","Indian Product/Fintech"],
+["PhonePe","https://www.phonepe.com/careers","Indian Product/Fintech"],
+["Paytm","https://paytm.com/careers","Indian Product/Fintech"],
+["Groww","https://groww.in/careers","Indian Product/Fintech"],
+["Zerodha","https://zerodha.com/careers","Indian Product/Fintech"],
+["Freshworks","https://www.freshworks.com/company/careers","Indian Product/Fintech"],
+["CRED","https://careers.cred.club","Indian Product/Fintech"],
+["Meesho","https://careers.meesho.com","Indian Product/Fintech"],
+["Urban Company","https://careers.urbancompany.com","Indian Product/Fintech"],
+["Slice","https://sliceit.com/careers","Indian Product/Fintech"],
+["Juspay","https://juspay.io/careers","Indian Product/Fintech"],
+["Cashfree Payments","https://www.cashfree.com/careers","Indian Product/Fintech"],
+["Chargebee","https://www.chargebee.com/careers","Indian Product/Fintech"],
+["Zoho","https://www.zoho.com/careers","Indian Product/Fintech"],
+["Darwinbox","https://darwinbox.com/careers","Indian Product/Fintech"],
+["Innovaccer","https://innovaccer.com/careers","Indian Product/Fintech"],
+["Whatfix","https://whatfix.com/careers","Indian Product/Fintech"],
+["CleverTap","https://clevertap.com/careers","Indian Product/Fintech"],
+["MoEngage","https://www.moengage.com/careers","Indian Product/Fintech"],
+["Rapido","https://www.rapido.bike/careers","Indian Product/Fintech"],
+["Porter","https://porter.in/careers","Indian Product/Fintech"],
+["Delhivery","https://www.delhivery.com/careers","Indian Product/Fintech"],
+["Dream11","https://dream11.com/careers","Indian Product/Fintech"],
+["Games24x7","https://games24x7.com/careers","Indian Product/Fintech"],
+["upGrad","https://upgrad.com/careers","Indian Product/Fintech"],
+["Unacademy","https://unacademy.com/careers","Indian Product/Fintech"],
+["Goldman Sachs","https://www.goldmansachs.com/careers","Quant/Finance"],
+["JP Morgan","https://careers.jpmorgan.com","Quant/Finance"],
+["Morgan Stanley","https://www.morganstanley.com/careers","Quant/Finance"],
+["Optiver","https://optiver.com/working-at-optiver","Quant/Finance"],
+["IMC Trading","https://www.imc.com/careers","Quant/Finance"],
+["D E Shaw","https://www.deshawindia.com/careers","Quant/Finance"],
+["Uber","https://www.uber.com/careers","Global Consumer Tech"],
+["Airbnb","https://careers.airbnb.com","Global Consumer Tech"],
+["Spotify","https://careers.spotify.com","Global Consumer Tech"],
+["Snap","https://careers.snap.com","Global Consumer Tech"],
+["TikTok","https://careers.tiktok.com","Global Consumer Tech"],
+["eBay","https://www.ebayinc.com/company/careers","Global Consumer Tech"],
+["Walmart","https://careers.walmart.com","Global Consumer Tech"],
+["Pinterest","https://www.pinterestcareers.com","Global Consumer Tech"],
+["Coinbase","https://www.coinbase.com/careers","Global Consumer Tech"],
+["OpenAI","https://openai.com/careers","AI Research/Frontier"],
+["DeepMind","https://deepmind.com/careers","AI Research/Frontier"],
+["Anthropic","https://www.anthropic.com/careers","AI Research/Frontier"],
+["HuggingFace","https://huggingface.co/careers","AI Research/Frontier"],
+["Scale AI","https://scale.com/careers","AI Research/Frontier"],
+["Palantir","https://www.palantir.com/careers","AI Research/Frontier"],
+["Perplexity AI","https://www.perplexity.ai/careers","AI Research/Frontier"],
+["Cohere","https://cohere.com/careers","AI Research/Frontier"],
+["xAI","https://x.ai/careers","AI Research/Frontier"],
+["Plivo","https://www.plivo.com/careers/","Voice/Speech AI"],
+["Exotel","https://exotel.com/careers/","Voice/Speech AI"],
+["Deepgram","https://deepgram.com/careers","Voice/Speech AI"],
+["AssemblyAI","https://www.assemblyai.com/careers","Voice/Speech AI"],
+["ElevenLabs","https://elevenlabs.io/careers","Voice/Speech AI"],
+["Sarvam AI","https://www.sarvam.ai/careers","Voice/Speech AI"],
+["Ola Krutrim","https://olakrutrim.com/careers","Voice/Speech AI"],
+["Uniphore","https://www.uniphore.com/careers/","Voice/Speech AI"],
+["Observe.AI","https://www.observe.ai/careers","Voice/Speech AI"],
+["Skit.ai","https://skit.ai/careers/","Voice/Speech AI"],
+["Gnani.ai","https://gnani.ai/careers/","Voice/Speech AI"],
+["Retell AI","https://www.retellai.com/careers","Voice/Speech AI"],
+["Bland AI","https://www.bland.ai/careers","Voice/Speech AI"],
+["Accenture","https://www.accenture.com/careers","IT Services"],
+["Capgemini","https://www.capgemini.com/careers","IT Services"],
+["Cognizant","https://careers.cognizant.com","IT Services"],
+["HCL","https://www.hcltech.com/careers","IT Services"],
+["Infosys","https://www.infosys.com/careers","IT Services"],
+["TCS","https://www.tcs.com/careers","IT Services"],
+["Wipro","https://careers.wipro.com","IT Services"],
+["LinkedIn Jobs (search)","https://www.linkedin.com/jobs/","Aggregator Portal"],
+["Glassdoor (search)","https://www.glassdoor.co.in/Job/index.htm","Aggregator Portal"],
+["Naukri","https://www.naukri.com","Aggregator Portal"],
+["Wellfound (AngelList)","https://wellfound.com","Aggregator Portal"],
+["Instahyre","https://www.instahyre.com","Aggregator Portal"],
+["Cutshort","https://cutshort.io","Aggregator Portal"],
+["Hirist","https://www.hirist.tech","Aggregator Portal"],
+["Internshala","https://internshala.com","Aggregator Portal"],
+["SpeechTechJobs (ASR/Voice niche)","https://speechtechjobs.com","Aggregator Portal"],
+["Y Combinator Work at a Startup","https://www.workatastartup.com","Aggregator Portal"],
+["iimjobs","https://www.iimjobs.com","Aggregator Portal"]
+];
+
+// Specific current postings found via web search on 2026-08-19. Each entry: {url, title, deadline}.
+// deadline is '' unless a page explicitly stated one. Superseded by GITHUB_POSTINGS_URL once the
+// daily discovery routine has pushed at least one postings.json to the repo.
+const POSTINGS_SEED = {
+  "Sarvam AI": [{ url: "https://www.sarvam.ai/careers/jobs/681f6891-9f59-4b60-a9cb-4c5cfb1454a1", title: "AI Engineer - Intern", deadline: "" }],
+  "Databricks": [{ url: "https://www.databricks.com/company/careers/university-recruiting/software-engineering-intern-2026-6866534002", title: "Software Engineering Intern (2026)", deadline: "" }],
+  "Skit.ai": [{ url: "https://skit.keka.com/careers/jobdetails/88785", title: "Software Engineer (Solutions)", deadline: "" }],
+  "Exotel": [{ url: "https://in.prosple.com/graduate-employers/exotel-india/jobs-internships/software-engineer-intern-gen-ai", title: "Software Engineer Intern (Gen AI)", deadline: "" }],
+  "Flipkart": [{ url: "https://www.flipkartcareers.com/students", title: "GRiD — student SDE pipeline", deadline: "" }],
+  "Atlassian": [{ url: "https://www.atlassian.com/company/careers/earlycareers", title: "Early Careers — Bengaluru", deadline: "" }],
+  "Google": [{ url: "https://www.google.com/about/careers/applications/internships", title: "Software Engineering Intern — search current cycle", deadline: "" }],
+};
+
+function makeSeedData() {
+  return SEED.map(([company, portal, category], i) => ({
+    id: 'seed-' + i,
+    company, portal, category: category || 'Other',
+    role: category === 'Aggregator Portal' ? 'Search / monitor for new postings' : 'SDE Intern / New Grad',
+    postings: (POSTINGS_SEED[company] || []).map(p => ({ ...p })),
+    status: 'Not Started',
+    dateApplied: '',
+    alumniName: '', outreachStatus: 'Not Started', outreachDate: '',
+    lastChecked: '', notes: ''
+  }));
+}
+
+const STORE_KEY = 'jobTrackerData_v2';
+let data = load();
+let sortKey = null, sortDir = 1;
+let filters = { q: '', status: '', outreach: '', category: '', rotation: false };
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return migrate(JSON.parse(raw));
+    const legacy = localStorage.getItem('jobTrackerData_v1');
+    if (legacy) return migrate(JSON.parse(legacy));
+  } catch (e) {}
+  return makeSeedData();
+}
+
+// Backfills fields added to the schema after a row was already cached in localStorage,
+// and drops fields retired from the schema (skillFit/interestFit/compLevel/directLink).
+function migrate(rows) {
+  const seedByCompany = Object.fromEntries(SEED.map(([company, portal, category]) => [company, { portal, category }]));
+  return rows.map(r => {
+    const seed = seedByCompany[r.company];
+    let postings = Array.isArray(r.postings) ? r.postings.slice() : [];
+    if (!postings.length && r.directLink) {
+      postings = [{ url: r.directLink, title: 'Direct link', deadline: '' }];
+    }
+    if (!postings.length && POSTINGS_SEED[r.company]) {
+      postings = POSTINGS_SEED[r.company].map(p => ({ ...p }));
+    }
+    const { directLink, skillFit, interestFit, compLevel, ...rest } = r;
+    return {
+      category: seed ? seed.category : 'Other',
+      ...rest,
+      postings,
+    };
+  });
+}
+function save() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+  renderStats();
+}
+
+function deadlineBadge(deadline) {
+  if (!deadline) return '';
+  const days = Math.ceil((new Date(deadline + 'T00:00:00').getTime() - Date.now()) / 86400000);
+  const cls = days <= 3 ? 'urgent' : days <= 10 ? 'soon' : 'ok';
+  const label = days < 0 ? 'expired' : days === 0 ? 'today' : `${days}d left`;
+  return `<span class="deadline-badge ${cls}">${label}</span>`;
+}
+
+function renderPostings(r) {
+  const items = (r.postings || []).map((p, idx) => `
+    <div class="posting-item">
+      <a href="${escAttr(p.url)}" target="_blank" rel="noopener" title="${escAttr(p.title || p.url)}">${escHtml(p.title || 'posting')}</a>
+      ${deadlineBadge(p.deadline)}
+      <button class="posting-rm" data-rm-posting="${idx}" title="Remove">✕</button>
+    </div>`).join('');
+  return items + `<button class="add-posting-btn" data-add-posting="1">+ posting</button>`;
+}
+
+function stamp(dateStr) {
+  return dateStr ? `<span class="stamp">${dateStr}</span>` : `<span class="stamp empty">—</span>`;
+}
+
+function daysSince(dateStr) {
+  if (!dateStr) return Infinity;
+  const d = new Date(dateStr.slice(0,10) + 'T00:00:00');
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+
+function populateFilterSelects() {
+  const sf = document.getElementById('statusFilter');
+  const of = document.getElementById('outreachFilter');
+  const cf = document.getElementById('categoryFilter');
+  STATUS_OPTS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sf.appendChild(o); });
+  OUTREACH_OPTS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; of.appendChild(o); });
+  const categories = [...new Set(data.map(r => r.category || 'Other'))].sort();
+  categories.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cf.appendChild(o); });
+}
+
+function selectHtml(opts, current) {
+  return opts.map(o => `<option value="${o}" ${o === current ? 'selected' : ''}>${o}</option>`).join('');
+}
+
+function visibleRows() {
+  let rows = data.filter(r => {
+    if (filters.status && r.status !== filters.status) return false;
+    if (filters.outreach && r.outreachStatus !== filters.outreach) return false;
+    if (filters.category && (r.category || 'Other') !== filters.category) return false;
+    if (filters.q) {
+      const q = filters.q.toLowerCase();
+      if (!(r.company.toLowerCase().includes(q) || r.role.toLowerCase().includes(q) || (r.notes||'').toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+  if (filters.rotation) {
+    rows = rows.slice().sort((a,b) => {
+      const da = a.lastChecked ? new Date(a.lastChecked).getTime() : -Infinity;
+      const db = b.lastChecked ? new Date(b.lastChecked).getTime() : -Infinity;
+      return da - db;
+    });
+  } else if (sortKey) {
+    rows = rows.slice().sort((a,b) => {
+      let va = a[sortKey], vb = b[sortKey];
+      va = va === '' || va === null || va === undefined ? '' : va;
+      vb = vb === '' || vb === null || vb === undefined ? '' : vb;
+      if (va < vb) return -1 * sortDir;
+      if (va > vb) return 1 * sortDir;
+      return 0;
+    });
+  }
+  return rows;
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const rows = visibleRows();
+  tbody.innerHTML = rows.map(r => {
+    const stale = r.lastChecked && daysSince(r.lastChecked) > 7;
+    const isAuto = AUTO_TIER_CATEGORIES.includes(r.category);
+    return `<tr data-id="${r.id}" class="${stale ? 'stale' : ''}">
+      <td class="company-cell">${r.company}${r.portal ? `<a href="${r.portal}" target="_blank" rel="noopener">open</a>` : ''}</td>
+      <td><span class="chip dim">${escHtml(r.category || 'Other')}</span></td>
+      <td class="role-col"><input type="text" data-field="role" value="${escAttr(r.role)}"></td>
+      <td class="postings-cell">${renderPostings(r)}</td>
+      <td><select data-field="status">${selectHtml(STATUS_OPTS, r.status)}</select></td>
+      <td>${stamp(r.dateApplied)}</td>
+      <td><input type="text" data-field="alumniName" value="${escAttr(r.alumniName)}" placeholder="Name / link"></td>
+      <td><select data-field="outreachStatus">${selectHtml(OUTREACH_OPTS, r.outreachStatus)}</select></td>
+      <td>${stamp(r.outreachDate)}</td>
+      <td>${stamp(r.lastChecked)}${isAuto ? '<div class="auto-badge">auto</div>' : `<button class="check-btn" data-check="1" title="Mark checked today">check</button>`}</td>
+      <td class="notes"><textarea data-field="notes" rows="1">${escHtml(r.notes)}</textarea></td>
+      <td><button class="del-btn" data-del="${r.id}" title="Delete row">✕</button></td>
+    </tr>`;
+  }).join('');
+  renderStats();
+}
+
+function escAttr(s) { return (s||'').replace(/"/g,'&quot;'); }
+function escHtml(s) { return (s||'').replace(/</g,'&lt;'); }
+
+function renderStats() {
+  const total = data.length;
+  const applied = data.filter(r => APPLIED_STATUSES.includes(r.status)).length;
+  const active = data.filter(r => ['OA/Assessment','Phone Screen','Interview'].includes(r.status)).length;
+  const offers = data.filter(r => r.status === 'Offer').length;
+  const outreachSent = data.filter(r => SENT_OUTREACH.includes(r.outreachStatus)).length;
+  const responded = data.filter(r => r.outreachStatus.startsWith('Responded')).length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="num">${total}</div><div class="lbl">Tracked</div></div>
+    <div class="stat"><div class="num">${applied}</div><div class="lbl">Applied</div></div>
+    <div class="stat"><div class="num">${active}</div><div class="lbl">In Process</div></div>
+    <div class="stat"><div class="num">${offers}</div><div class="lbl">Offers</div></div>
+    <div class="stat"><div class="num">${outreachSent}</div><div class="lbl">Outreach Sent</div></div>
+    <div class="stat"><div class="num">${responded}${outreachSent ? ' ('+Math.round(100*responded/outreachSent)+'%)' : ''}</div><div class="lbl">Alumni Responded</div></div>
+  `;
+}
+
+function todayStr() { const d = new Date(); return d.toISOString().slice(0,10); }
+
+document.getElementById('tbody').addEventListener('input', e => {
+  const field = e.target.dataset.field;
+  if (!field) return;
+  const tr = e.target.closest('tr');
+  const row = data.find(r => r.id === tr.dataset.id);
+  if (!row) return;
+  row[field] = e.target.value;
+  save();
+});
+document.getElementById('tbody').addEventListener('change', e => {
+  const field = e.target.dataset.field;
+  if (!field) return;
+  const tr = e.target.closest('tr');
+  const row = data.find(r => r.id === tr.dataset.id);
+  if (!row) return;
+  row[field] = e.target.value;
+  if (field === 'status' && APPLIED_STATUSES.includes(row.status) && !row.dateApplied) {
+    row.dateApplied = todayStr();
+  }
+  if (field === 'outreachStatus' && SENT_OUTREACH.includes(row.outreachStatus) && !row.outreachDate) {
+    row.outreachDate = todayStr();
+  }
+  save(); render();
+});
+document.getElementById('tbody').addEventListener('click', e => {
+  if (e.target.dataset.del) {
+    if (confirm('Delete this row?')) {
+      data = data.filter(r => r.id !== e.target.dataset.del);
+      save(); render();
+    }
+    return;
+  }
+  if (e.target.dataset.check) {
+    const tr = e.target.closest('tr');
+    const row = data.find(r => r.id === tr.dataset.id);
+    if (!row) return;
+    row.lastChecked = todayStr();
+    save(); render();
+    return;
+  }
+  if (e.target.dataset.addPosting) {
+    const tr = e.target.closest('tr');
+    const row = data.find(r => r.id === tr.dataset.id);
+    if (!row) return;
+    const url = prompt('Posting URL:', 'https://');
+    if (!url) return;
+    const title = prompt('Short title (e.g. "SDE Intern 2027"):', 'SDE Intern') || 'posting';
+    const deadline = prompt('Application deadline (YYYY-MM-DD), leave blank if unknown:', '') || '';
+    if (!Array.isArray(row.postings)) row.postings = [];
+    row.postings.push({ url, title, deadline });
+    save(); render();
+    return;
+  }
+  if (e.target.dataset.rmPosting !== undefined) {
+    const tr = e.target.closest('tr');
+    const row = data.find(r => r.id === tr.dataset.id);
+    if (!row) return;
+    row.postings.splice(Number(e.target.dataset.rmPosting), 1);
+    save(); render();
+  }
+});
+
+document.getElementById('addRowBtn').addEventListener('click', () => {
+  const company = prompt('Company name:');
+  if (!company) return;
+  const portal = prompt('Career portal URL (optional):', 'https://') || '';
+  const category = prompt('Category (e.g. Voice/Speech AI, Indian Product/Fintech, Global Big Tech, Aggregator Portal):', 'Other') || 'Other';
+  data.push({
+    id: 'row-' + Date.now(),
+    company, portal, category, role: 'SDE Intern / New Grad', postings: [], status: 'Not Started',
+    dateApplied: '', alumniName: '', outreachStatus: 'Not Started', outreachDate: '', lastChecked: '', notes: ''
+  });
+  save(); render();
+});
+
+document.getElementById('exportJsonBtn').addEventListener('click', () => {
+  downloadFile('job-tracker-backup-' + todayStr() + '.json', JSON.stringify(data, null, 2), 'application/json');
+});
+document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  const cols = ['company','category','role','portal','postings','status','dateApplied','alumniName','outreachStatus','outreachDate','lastChecked','notes'];
+  const lines = [cols.join(',')];
+  data.forEach(r => {
+    lines.push(cols.map(c => {
+      if (c === 'postings') {
+        return csvEscape((r.postings || []).map(p => `${p.title}|${p.url}|${p.deadline || ''}`).join(' ;; '));
+      }
+      return csvEscape(r[c]);
+    }).join(','));
+  });
+  downloadFile('job-tracker-' + todayStr() + '.csv', lines.join('\n'), 'text/csv');
+});
+function csvEscape(v) {
+  v = String(v ?? '');
+  if (/[",\n]/.test(v)) v = '"' + v.replace(/"/g,'""') + '"';
+  return v;
+}
+function downloadFile(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!Array.isArray(imported)) throw new Error('not an array');
+      if (confirm(`Import ${imported.length} rows? This replaces your current data (export a backup first if unsure).`)) {
+        data = migrate(imported);
+        save(); render();
+      }
+    } catch (err) {
+      alert('Could not parse that file as tracker JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('resetSeedBtn').addEventListener('click', () => {
+  if (confirm('Reset to the original seed list? This discards all current data (export a backup first if unsure).')) {
+    data = makeSeedData();
+    save(); render();
+  }
+});
+
+document.getElementById('searchBox').addEventListener('input', e => { filters.q = e.target.value; render(); });
+document.getElementById('statusFilter').addEventListener('change', e => { filters.status = e.target.value; render(); });
+document.getElementById('outreachFilter').addEventListener('change', e => { filters.outreach = e.target.value; render(); });
+document.getElementById('categoryFilter').addEventListener('change', e => { filters.category = e.target.value; render(); });
+document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+  filters = { q:'', status:'', outreach:'', category:'', rotation:false };
+  document.getElementById('searchBox').value = '';
+  document.getElementById('statusFilter').value = '';
+  document.getElementById('outreachFilter').value = '';
+  document.getElementById('categoryFilter').value = '';
+  sortKey = null;
+  render();
+});
+document.getElementById('rotationBtn').addEventListener('click', () => {
+  filters.rotation = !filters.rotation;
+  document.getElementById('rotationBtn').textContent = filters.rotation
+    ? 'Showing stale queue — click to go back to normal view'
+    : 'Show stale queue (oldest synced/checked first)';
+  render();
+});
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    filters.rotation = false;
+    document.getElementById('rotationBtn').textContent = 'Show stale queue (oldest synced/checked first)';
+    render();
+  });
+});
+
+// Pulls postings.json committed by the daily discovery routine. Works from file:// pages because
+// fetch() to a remote https URL isn't subject to the same restriction as fetching local files.
+async function syncFromGitHub(manual) {
+  const line = document.getElementById('syncLine');
+  line.className = 'sync-line';
+  line.textContent = 'Syncing from GitHub...';
+  try {
+    const res = await fetch(GITHUB_POSTINGS_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    let newPostingsCount = 0, companiesTouched = 0;
+    const byCompany = json.companies || {};
+    Object.keys(byCompany).forEach(company => {
+      const row = data.find(r => r.company === company);
+      if (!row) return;
+      const incoming = byCompany[company].postings || [];
+      if (!Array.isArray(row.postings)) row.postings = [];
+      const existingUrls = new Set(row.postings.map(p => p.url));
+      incoming.forEach(p => {
+        if (!existingUrls.has(p.url)) { row.postings.push(p); newPostingsCount++; existingUrls.add(p.url); }
+      });
+      row.lastChecked = byCompany[company].lastChecked || json.generatedAt || row.lastChecked;
+      companiesTouched++;
+    });
+    save(); render();
+    line.className = 'sync-line ok';
+    line.textContent = `Synced from GitHub: ${companiesTouched} companies checked, ${newPostingsCount} new posting(s) added. Report generated ${json.generatedAt || 'unknown time'}.`;
+  } catch (err) {
+    line.className = 'sync-line err';
+    line.textContent = manual
+      ? `Could not sync from GitHub yet (${err.message}). The daily routine may not have pushed a report yet — try again after it runs, or check the repo directly.`
+      : `No GitHub sync data available yet (${err.message}). Using local/seed data only.`;
+  }
+}
+document.getElementById('syncBtn').addEventListener('click', () => syncFromGitHub(true));
+
+populateFilterSelects();
+render();
+syncFromGitHub(false);
+</script>
+</body>
+</html>
