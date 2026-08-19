@@ -1,12 +1,11 @@
 // Pulls India-based SDE/intern postings from public Greenhouse and Lever job-board APIs
 // (both explicitly designed for programmatic read access — no scraping, no ToS issue)
 // and upserts them straight into Supabase (postings + company_checks tables).
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars.');
-  process.exit(1);
-}
+//
+// SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY are read fresh from process.env inside each
+// function (not cached as module-level constants) — Node caches modules on require(),
+// so a module-level const would freeze whatever .env state existed at the FIRST require
+// anywhere in the process, silently breaking later callers that load .env afterward.
 
 const GREENHOUSE = {
   anthropic: ['Anthropic', 'AI Research/Frontier'],
@@ -77,11 +76,12 @@ async function discoverLever(token) {
 
 async function supabaseUpsert(table, rows, conflictCols) {
   if (!rows.length) return;
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?on_conflict=${conflictCols}`, {
+  const { url, key } = supabaseCreds();
+  const res = await fetch(`${url}/rest/v1/${table}?on_conflict=${conflictCols}`, {
     method: 'POST',
     headers: {
-      apikey: SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: key,
+      Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json',
       Prefer: 'resolution=merge-duplicates,return=minimal',
     },
@@ -93,12 +93,20 @@ async function supabaseUpsert(table, rows, conflictCols) {
   }
 }
 
+function supabaseCreds() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars.');
+  return { url, key };
+}
+
 async function supabaseDelete(table, filterQuery) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filterQuery}`, {
+  const { url, key } = supabaseCreds();
+  const res = await fetch(`${url}/rest/v1/${table}?${filterQuery}`, {
     method: 'DELETE',
     headers: {
-      apikey: SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: key,
+      Authorization: `Bearer ${key}`,
       Prefer: 'return=minimal',
     },
   });
@@ -109,6 +117,7 @@ async function supabaseDelete(table, filterQuery) {
 }
 
 async function main() {
+  supabaseCreds(); // throws early with a clear message if env vars are missing
   const now = new Date().toISOString();
   const postingRows = [];
   const checkRows = [];
@@ -151,4 +160,11 @@ async function main() {
   if (errored.length) console.log(`Errors fetching: ${errored.join(', ')}`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+module.exports = {
+  GREENHOUSE, LEVER, INDIA_RE, ROLE_RE, SENIOR_RE, ENTRY_RE, NON_SDE_RE,
+  isEntryLevel, discoverGreenhouse, discoverLever, main,
+};
+
+if (require.main === module) {
+  main().catch(e => { console.error(e); process.exit(1); });
+}
