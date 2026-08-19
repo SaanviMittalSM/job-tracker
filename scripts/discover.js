@@ -35,6 +35,7 @@ const GREENHOUSE = {
   optiver: ['Optiver', 'Quant/Finance'],
   parloa: ['Parloa', 'Voice/Speech AI'],
   phonepe: ['PhonePe', 'Indian Product/Fintech'],
+  razorpaysoftwareprivatelimited: ['Razorpay', 'Indian Product/Fintech'],
   pinterest: ['Pinterest', 'Global Consumer Tech'],
   // 'tcs' greenhouse slug verified to be an unrelated company (Bristol clinical roles) - excluded.
 };
