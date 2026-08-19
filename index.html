@@ -154,7 +154,7 @@
 <header>
   <div>
     <h1>Job Application Tracker</h1>
-    <div class="sub">Status/outreach fields save to local storage. Applied &amp; outreach dates auto-stamp from status changes — no manual date entry.</div>
+    <div class="sub">Sorted with newest/open postings on top, stale companies at the bottom by default — click any column to override. Applied &amp; outreach dates auto-stamp from status changes.</div>
   </div>
   <div class="toolbar">
     <button id="syncBtn">🔄 Sync from GitHub</button>
@@ -480,8 +480,22 @@ function visibleRows() {
       if (va > vb) return 1 * sortDir;
       return 0;
     });
+  } else {
+    // Default view: companies with open postings first (freshest-checked first), stale/no-posting rows sink to the bottom.
+    rows = rows.slice().sort((a, b) => {
+      const fa = freshnessRank(a), fb = freshnessRank(b);
+      if (fa.hasPostings !== fb.hasPostings) return fa.hasPostings ? -1 : 1;
+      if (fb.checkedTime !== fa.checkedTime) return fb.checkedTime - fa.checkedTime;
+      return a.company.localeCompare(b.company);
+    });
   }
   return rows;
+}
+
+function freshnessRank(row) {
+  const hasPostings = (row.postings || []).length > 0;
+  const checkedTime = row.lastChecked ? new Date(row.lastChecked.slice(0, 10) + 'T00:00:00').getTime() : -Infinity;
+  return { hasPostings, checkedTime };
 }
 
 function render() {
