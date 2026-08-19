@@ -1,111 +1,94 @@
 # Job Application Tracker — Off-Campus Placement System
 
-A local, self-contained system for tracking SDE intern/full-time applications, systematically working through career portals + job aggregators, and running BITS Pilani alumni referral outreach.
+A tracking system for SDE intern/full-time applications: a dashboard, two independent automated discovery pipelines, and a BITS Pilani alumni referral workflow.
+
+**Public repo:** [github.com/SaanviMittalSM/job-tracker](https://github.com/SaanviMittalSM/job-tracker) — contains the dashboard, discovery code, and `postings.json` (job listings only — titles/URLs/deadlines, nothing personal). Your resume stays local-only (`.gitignore`'d) and is never pushed here.
 
 ## Files
 
-- `index.html` — the dashboard. Open it directly in any browser (double-click, or drag into a tab). No server, no install. Data auto-saves to that browser's local storage.
-- `saanvi_s_latex_resume_final.pdf` — your resume (used below to tailor the fit rubric and message templates).
-- This README — the workflow that ties it together.
+- `index.html` — the dashboard. Open it directly in any browser. No server, no install. Your edits (status, alumni contact, notes) save to that browser's local storage; discovered postings sync in from GitHub automatically on load.
+- `postings.json` — machine-written by the discovery automation below. Don't hand-edit; it gets overwritten.
+- `scripts/discover.js` + `.github/workflows/discover.yml` — the Greenhouse/Lever discovery automation (runs on GitHub's infrastructure, not dependent on any Claude session).
+- This README.
 
-**Backup habit:** local storage is per-browser and can be cleared. Click **Export JSON** in the dashboard weekly (or after big updates) and keep the file somewhere synced (OneDrive/Drive). **Import JSON** restores from a backup or lets you move data to another machine.
+**Backup habit:** local storage is per-browser and can be cleared. Click **Export JSON** in the dashboard weekly and keep the file somewhere synced. **Import JSON** restores from a backup.
 
 ---
 
 ## 1. What's in the dashboard
 
-Seeded with 100+ entries across:
+Seeded with 100+ companies across Global Big Tech, Global SaaS/Cloud, Indian Product/Fintech, Quant/Finance, AI Research/Frontier, **Voice/Speech AI** (your highest-leverage tier given your ML/voice-AI target roles — Plivo, Deepgram, AssemblyAI, ElevenLabs, Sarvam AI, Uniphore, Skit.ai, Ola Krutrim...), IT Services, and job aggregator portals (LinkedIn Jobs, Glassdoor, Naukri, Wellfound, Instahyre, Cutshort, Hirist, Internshala, SpeechTechJobs).
 
-| Category | Examples |
-|---|---|
-| Global Big Tech | Google, Microsoft, Amazon, Meta, Nvidia, LinkedIn, Netflix... |
-| Global SaaS/Cloud | Stripe, Databricks, Cloudflare, MongoDB, Figma, Notion... |
-| Indian Product/Fintech | Flipkart, Razorpay, CRED, Meesho, Zoho, Juspay, Rapido... |
-| Quant/Finance | Goldman Sachs, JP Morgan, Optiver, D E Shaw... |
-| AI Research/Frontier | OpenAI, Anthropic, DeepMind, HuggingFace, Cohere, xAI... |
-| **Voice/Speech AI** | Plivo, Deepgram, AssemblyAI, ElevenLabs, Sarvam AI, Uniphore, Skit.ai, Ola Krutrim... |
-| IT Services | TCS, Infosys, Wipro, Accenture... (safety net tier) |
-| Aggregator Portal | LinkedIn Jobs, Glassdoor, Naukri, Wellfound, Instahyre, Cutshort, Hirist, Internshala, SpeechTechJobs |
+Each row tracks: category, role, **postings** (one or more direct links + deadlines, auto-populated where possible), **status**, **applied date** (auto-stamped — see below), alumni contact, outreach status, **outreach-sent date** (auto-stamped), last synced/checked, notes.
 
-The **Voice/Speech AI** category exists specifically because your resume/portfolio trajectory is aimed at ML/voice-AI roles (Plivo-style JD) — treat it as your highest-leverage tier, not an afterthought next to the Big Tech names.
-
-Add any company or portal I missed with **+ Add Row**. Everything (status, dates, scores, notes) is editable inline — click a cell.
+**No manual date typing.** `dateApplied` auto-fills the day you move Status to Applied-or-later; `outreachDate` auto-fills the day you move Outreach to Sent-or-later. The old skill/interest/comp-level fit-score fields were removed — sort/filter by category and postings instead.
 
 ---
 
-## 2. Weekly rotation workflow (instead of ad hoc checking)
+## 2. Automated discovery — two independent pipelines
 
-Aggregator scraping across 70+ differently-built portals isn't reliable — most are JS-rendered and structures differ, so an automated "tell me when something new opens" bot would silently miss postings and give false confidence. The **Last Checked** column + rotation queue solves this without automation risk:
+### Pipeline A: GitHub Actions + Greenhouse/Lever APIs (primary, fully automatic)
 
-1. Click **Show weekly rotation queue** — this sorts every row by oldest-checked-first (blank = oldest).
-2. Pick your session size (e.g. 15 companies/aggregators a day). Open each portal link, check for new SDE intern/new-grad postings, and:
-   - If something's open and you haven't applied: update **Status**.
-   - Either way: set **Last Checked** to today.
-3. Rows untouched for 7+ days get a yellow left-edge highlight so stale ones are visually obvious even outside the rotation view.
-4. The **Aggregator Portal** rows (LinkedIn Jobs, Glassdoor, Naukri, Wellfound, etc.) go through the same rotation — checking 9 aggregators covers postings from companies not on your seed list too, which is the real way to "cast a broad net" without me scraping every individual company site.
+`scripts/discover.js` calls the **public, unauthenticated** job-board APIs that Greenhouse and Lever expose for exactly this purpose (not scraping — these are documented APIs meant for programmatic reads). `.github/workflows/discover.yml` runs it every 8 hours entirely on GitHub's infrastructure — no Claude session, no API key, no cost, keeps running even if you never open this chat again. It currently covers 22 companies confirmed on these platforms (Anthropic, Figma, Databricks, Scale AI, AssemblyAI, Stripe, Slice, GitLab, Elastic, MongoDB, Cloudflare, Okta, Zscaler, Twilio, Dropbox, Postman, xAI, Plivo, CRED, Meesho, Porter, Freshworks), filters for India-located + entry-level titles, and commits results straight to `postings.json`.
 
-This gets you through the full list roughly once a week with ~15-20 min/day instead of one overwhelming pass.
+### Pipeline B: scheduled Claude routine + WebSearch (secondary, broader net)
 
----
+For companies not on Greenhouse/Lever (Sarvam AI, Krutrim, Uniphore, Skit.ai, Gnani.ai, most Indian Product/Fintech companies, AI Research/Frontier), a scheduled cloud routine runs daily (~8 AM IST), does targeted web searches, and — once repo write access is confirmed working — commits its findings to the same `postings.json`. Manage it at [claude.ai/code/routines](https://claude.ai/code/routines) (routine: "Daily India job posting discovery — priority tier").
 
-## 3. Fit score rubric
+### How the dashboard consumes both
 
-Three sub-scores (1–5 each), averaged into a color-coded chip (green ≥4, yellow 2.5–4, red <2.5):
+On every page load, `index.html` fetches `postings.json` straight from `raw.githubusercontent.com` (works even from a local file, since that's a remote HTTPS request, not a local one) and merges new postings/deadlines in automatically — no manual "sync" step required, though a **🔄 Sync from GitHub** button exists for forcing an immediate refresh.
 
-- **Skill** — overlap with your actual stack: Python/TypeScript/C++, FastAPI/Node backend, PostgreSQL/SQLite/**Qdrant** (vector DB), Docker/K8s/CI-CD, Scikit-Learn/TensorFlow, and — as the voice-agent project lands — ASR/speech/turn-taking. A role wanting backend + ML systems work scores high; a pure frontend or pure DevOps role scores low regardless of brand.
-- **Interest** — alignment with where you're steering your career (ML/voice-AI, backend/distributed systems, applied ML infra). Score IT-services-style generic SDE roles low even if you'd take them as a safety net.
-- **Comp/Level** — intern stipend, new-grad comp band, or judgment call for early-stage startups (equity-heavy, harder to score — use IMC/Optiver/Goldman as your high-comp reference point).
+### What's still manual
 
-Don't over-tune this — it's there so `sort by Fit` surfaces your best-leverage applications first when you're deciding where to spend limited outreach effort, not a scientific formula.
+Companies not covered by either pipeline (most Global Big Tech, Quant/Finance, IT Services, and aggregator portals) fall back to a one-click **check** button per row — no typing, just marks "checked today" so the stale-row highlighting stays honest.
 
 ---
 
-## 4. BITS Pilani alumni referral workflow
+## 3. BITS Pilani alumni referral workflow
 
-I can't browse or automate LinkedIn — no scraping, no auto-connecting, no auto-sending messages, even with account access, because that violates LinkedIn's Terms of Service and risks your account being restricted. What follows is the manual (but fast) process; you execute the LinkedIn actions, the tracker keeps you organized.
+I don't automate LinkedIn (no scraping, no auto-connect, no auto-send — violates their ToS and risks your account) and I won't build bulk contact-scraping tools for the same underlying reason: pulling people's personal emails/phone numbers without consent for unsolicited outreach is a privacy/ToS problem regardless of which tool does it. **ContactOut** (a legitimate paid B2B contact-data product operating within its own compliance framework) is the sanctioned path if/when you get an account — ask and I'll wire up the lookup step. Until then:
 
 ### Step 1 — Find alumni (5-10 min per company)
 
-**On LinkedIn directly (best signal):**
-1. Go to LinkedIn **People search**.
-2. Use the **School** filter → "Birla Institute of Technology and Science, Pilani".
-3. Use the **Current company** filter → the target company.
-4. Optional: add "Software Engineer" or "SDE" to keywords to skip non-eng alumni.
+**LinkedIn People search:** School filter → "Birla Institute of Technology and Science, Pilani", Current company filter → target company, optionally add "Software Engineer"/"SDE" to keywords.
 
-**Google fallback (when LinkedIn's own filters are being weird, or you want a quick scan first):**
+**Google fallback:**
 ```
 site:linkedin.com/in "BITS Pilani" "<Company Name>" software engineer
 ```
-Swap in each company name from the tracker.
 
-Log what you find in the row's **Alumni Contact** cell (name + a short note, e.g. `Rohan K. – SDE2, joined 2023`), set **Outreach** to `Alumni Identified`.
+Log what you find in the row's **Alumni Contact** cell, set Outreach to "Alumni Identified".
 
-### Step 2 — Draft the message (use these as starting points, always personalize)
+### Step 2 — Message templates (personalize every time)
 
-Keep every message short — 3-5 sentences, one clear ask, easy to say yes to.
+**A. Connection note (300 char LinkedIn limit):**
+> Hi [Name], I'm a CS junior at BITS Pilani applying for [Role] at [Company]. Saw you're on the [team] team — would love to connect and hear about your experience there.
 
-**A. Cold connection request note** (LinkedIn caps these at 300 characters — keep it tight):
-> Hi [Name], I'm a CS junior at BITS Pilani applying for [Role] at [Company]. Saw you're on the [team, if known] team — would love to connect and hear about your experience there.
+**B. After they accept:**
+> Hi [Name], thanks for connecting! I'm finishing my B.E. in CS at BITS Pilani (2027) — I just wrapped a SWE internship at Honeywell building infra/observability tooling (cut a LaunchDarkly integration's billed connections ~80% by re-architecting the SDK usage), and I've been building backend/ML-systems projects since — most recently a FastAPI + Qdrant document platform load-tested to 700+ docs/min. I just applied for [Role] at [Company] and would really appreciate a referral if you think it's a fit — happy to send my resume over. No worries at all if you're not able to!
 
-**B. First message after they accept (the actual ask):**
-> Hi [Name], thanks for connecting! I'm finishing my B.E. in CS at BITS Pilani (2027) — I just wrapped a SWE internship at Honeywell building infra/observability tooling (cut a LaunchDarkly integration's billed connections ~80% by re-architecting the SDK usage), and I've been building backend/ML-systems projects since — most recently a FastAPI + Qdrant document platform load-tested to 700+ docs/min. I just applied for [Role] at [Company] ([link if useful]) and would really appreciate a referral if you think it's a fit — happy to send my resume over. No worries at all if you're not able to!
-
-**C. If they ask for your resume / more context** — send the PDF directly, plus one line on why this specific role: e.g. for Voice/Speech AI companies, mention the multilingual voice-agent project explicitly once it's further along; for backend-heavy roles, lead with the Secure Document Platform and Honeywell work; for ML-heavy roles, lead with the sensor-fusion project's R² result (0.38 → 0.997) as evidence of real modeling depth, not just API glue.
-
-**D. Thank-you (send regardless of outcome — this is what makes people refer you again next cycle):**
+**C. Thank-you (send regardless of outcome):**
 > Really appreciate you taking the time, [Name] — means a lot regardless of how it turns out. Hope our paths cross again!
 
 ### Step 3 — Track it
 
-Update the row's **Outreach** status as you go: `Message Drafted` → `Sent` → `Responded - Positive` / `Responded - No Referral` / `No Response`. Set **Outreach Date** when you send. The dashboard's stats bar shows your response rate live, so you can tell if a particular message style is landing.
+Outreach status: `Message Drafted` → `Sent` (auto-stamps the date) → `Responded - Positive` / `Responded - No Referral` / `No Response`. One polite bump after ~10 days of silence is fine; more reads as pushy.
 
-**No response after ~10 days?** One polite bump is fine, more than that reads as pushy — let it go and move to the next company.
+---
+
+## 4. Roadmap — mobile app + real backend
+
+Agreed direction: a PWA (installable, no app store needed) backed by a real database (Supabase — Postgres + auto-generated REST API + auth, free tier) instead of browser-only local storage, so your data syncs across devices.
+
+**Status: blocked on Supabase account creation** — that step needs your direct sign-up (email/OAuth + ToS acceptance), which I can't do on your behalf. Once you have a project, share the project URL + anon key (safe to share, designed to be client-visible) and I'll wire up: the PWA manifest + service worker, migrating the dashboard's local-storage logic to Supabase calls, and pointing the discovery pipelines at the database directly instead of (or alongside) `postings.json`.
 
 ---
 
 ## 5. Suggested daily loop
 
-1. Rotation queue → check 10-15 companies/portals for new postings, update statuses (10 min).
-2. For any `Not Started` row with Fit ≥ 4: apply on the portal, then start alumni search for that company (15-20 min).
-3. Send 2-3 outreach messages max/day (quality over volume — mass-messaging alumni reads as spam and hurts your response rate).
-4. Export JSON backup once a week.
+1. Open the dashboard — it auto-syncs from GitHub on load. Skim anything new.
+2. For any row with an interesting posting you haven't applied to: apply on the portal, flip Status to Applied (date auto-stamps).
+3. For strong-fit companies you've applied to: start alumni search, draft + send 2-3 messages max/day.
+4. Use the **check** button on non-automated rows you looked at manually.
+5. Export JSON backup weekly.
