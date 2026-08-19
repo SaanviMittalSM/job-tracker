@@ -226,7 +226,6 @@ const STATUS_OPTS = ['Not Started','Researching','Applied','OA/Assessment','Phon
 const OUTREACH_OPTS = ['Not Started','Alumni Identified','Message Drafted','Sent','Responded - Positive','Responded - No Referral','No Response','N/A'];
 const APPLIED_STATUSES = ['Applied','OA/Assessment','Phone Screen','Interview','Offer','Rejected','Withdrawn'];
 const SENT_OUTREACH = ['Sent','Responded - Positive','Responded - No Referral','No Response'];
-const AUTO_TIER_CATEGORIES = ['Voice/Speech AI','AI Research/Frontier','Indian Product/Fintech','Global SaaS/Cloud'];
 
 
 // Company list now lives in Supabase (companies table) instead of being hardcoded,
@@ -480,7 +479,10 @@ function render() {
   const rows = visibleRows();
   tbody.innerHTML = rows.map(r => {
     const stale = r.lastChecked && daysSince(r.lastChecked) > 7;
-    const isAuto = AUTO_TIER_CATEGORIES.includes(r.category);
+    // Per-company, not per-category: only true if this exact company has a real
+    // automated check on record (company_checks), so e.g. Amazon shows "auto" while
+    // Microsoft (same category, no API coverage yet) correctly shows the manual button.
+    const isAuto = !!checksByCompany[r.company];
     return `<tr data-id="${r.id}" class="${stale ? 'stale' : ''}">
       <td class="company-cell">${escHtml(r.company)}${r.portal ? `<a href="${escAttr(r.portal)}" target="_blank" rel="noopener">open</a>` : ''}</td>
       <td><span class="chip dim">${escHtml(r.category || 'Other')}</span></td>

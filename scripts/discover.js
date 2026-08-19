@@ -25,6 +25,18 @@ const GREENHOUSE = {
   dropbox: ['Dropbox', 'Global SaaS/Cloud'],
   postman: ['Postman', 'Global SaaS/Cloud'],
   xai: ['xAI', 'AI Research/Frontier'],
+  airbnb: ['Airbnb', 'Global Consumer Tech'],
+  coinbase: ['Coinbase', 'Global Consumer Tech'],
+  deepmind: ['DeepMind', 'AI Research/Frontier'],
+  groww: ['Groww', 'Indian Product/Fintech'],
+  imc: ['IMC Trading', 'Quant/Finance'],
+  linkedin: ['LinkedIn', 'Global Big Tech'],
+  observeai: ['Observe.AI', 'Voice/Speech AI'],
+  optiver: ['Optiver', 'Quant/Finance'],
+  parloa: ['Parloa', 'Voice/Speech AI'],
+  phonepe: ['PhonePe', 'Indian Product/Fintech'],
+  pinterest: ['Pinterest', 'Global Consumer Tech'],
+  // 'tcs' greenhouse slug verified to be an unrelated company (Bristol clinical roles) - excluded.
 };
 const LEVER = {
   plivo: ['Plivo', 'Voice/Speech AI'],
@@ -32,7 +44,12 @@ const LEVER = {
   meesho: ['Meesho', 'Indian Product/Fintech'],
   porter: ['Porter', 'Indian Product/Fintech'],
   freshworks: ['Freshworks', 'Indian Product/Fintech'],
+  palantir: ['Palantir', 'AI Research/Frontier'],
+  paytm: ['Paytm', 'Indian Product/Fintech'],
 };
+// Amazon's own careers API — public, unauthenticated, and exposes explicit
+// is_intern/is_manager/university_job booleans, more reliable than title-regex guessing.
+const AMAZON_SOURCE = { company: 'Amazon', category: 'Global Big Tech' };
 
 const INDIA_RE = /\bindia\b|bengaluru|bangalore|hyderabad|\bpune\b|gurgaon|gurugram|\bnoida\b|\bmumbai\b|\bchennai\b|delhi ncr/i;
 // Broadened beyond pure SDE titles: ML/AI, data, backend/full-stack, cloud/DevOps/SRE, QA, and general IT/tech roles.
@@ -72,6 +89,14 @@ async function discoverLever(token) {
       return INDIA_RE.test(locs) && isEntryLevel(p.text || '');
     })
     .map(p => ({ url: p.hostedUrl, title: p.text, deadline: null }));
+}
+
+async function discoverAmazon() {
+  const data = await fetchJson('https://www.amazon.jobs/en/search.json?country=IND&result_limit=100');
+  return (data.jobs || [])
+    .filter(j => j.country_code === 'IND' && !j.is_manager && ROLE_RE.test(j.title || '') && !NON_SDE_RE.test(j.title || ''))
+    .filter(j => j.is_intern || j.university_job || isEntryLevel(j.title || ''))
+    .map(j => ({ url: 'https://www.amazon.jobs' + j.job_path, title: j.title, deadline: null }));
 }
 
 async function supabaseUpsert(table, rows, conflictCols) {
@@ -148,15 +173,29 @@ async function main() {
   await processSource(GREENHOUSE, discoverGreenhouse);
   await processSource(LEVER, discoverLever);
 
+  // Amazon uses its own careers API (single company, not a per-tenant slug map like GH/Lever).
+  try {
+    const amazonPostings = await discoverAmazon();
+    checkRows.push({ company: AMAZON_SOURCE.company, category: AMAZON_SOURCE.category, last_checked_at: now, source: 'amazon' });
+    amazonPostings.forEach(p => postingRows.push({
+      company: AMAZON_SOURCE.company, category: AMAZON_SOURCE.category, title: p.title, url: p.url,
+      deadline: p.deadline, source: 'amazon', last_checked_at: now,
+    }));
+    totalFound += amazonPostings.length;
+  } catch (e) {
+    errored.push(AMAZON_SOURCE.company);
+    console.error(`  ${AMAZON_SOURCE.company}: ${e.message}`);
+  }
+
   // Replace semantics for the companies this script owns: clears postings that closed or
   // no longer match the filter, instead of accumulating stale rows forever via upsert-only.
-  const ownedCompanies = [...Object.values(GREENHOUSE), ...Object.values(LEVER)].map(([name]) => name);
-  await supabaseDelete('postings', `company=in.(${ownedCompanies.map(c => `"${c}"`).join(',')})&source=in.(greenhouse,lever)`);
+  const ownedCompanies = [...Object.values(GREENHOUSE), ...Object.values(LEVER)].map(([name]) => name).concat(AMAZON_SOURCE.company);
+  await supabaseDelete('postings', `company=in.(${ownedCompanies.map(c => `"${c}"`).join(',')})&source=in.(greenhouse,lever,amazon)`);
 
   await supabaseUpsert('company_checks', checkRows, 'company');
   await supabaseUpsert('postings', postingRows, 'company,url');
 
-  console.log(`Checked ${checkRows.length} companies via Greenhouse/Lever, found ${totalFound} India-relevant posting(s), upserted to Supabase.`);
+  console.log(`Checked ${checkRows.length} companies (Greenhouse/Lever/Amazon), found ${totalFound} India-relevant posting(s), upserted to Supabase.`);
   if (errored.length) console.log(`Errors fetching: ${errored.join(', ')}`);
 }
 
