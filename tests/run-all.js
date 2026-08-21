@@ -1,7 +1,8 @@
 // Runs unit, integration, and functional suites in order and prints one summary.
 // Usage: node tests/run-all.js
 const suites = [
-  ['unit', './unit.discover.test.js'],
+  ['unit.discover', './unit.discover.test.js'],
+  ['unit.merge_report', './unit.merge_report.test.js'],
   ['integration', './integration.supabase.test.js'],
   ['functional', './functional.pipeline.test.js'],
 ];

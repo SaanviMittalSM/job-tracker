@@ -1,53 +1,65 @@
 # Job Application Tracker — Off-Campus Placement System
 
-A tracking system for SDE intern/full-time applications: a dashboard, two independent automated discovery pipelines, and a BITS Pilani alumni referral workflow.
+A PWA for tracking SDE/ML/backend/cloud intern & new-grad applications: live job-posting discovery, a private per-account dashboard, Gmail-based response detection with an in-app notification center, and a BITS Pilani alumni referral workflow.
 
-**Public repo:** [github.com/SaanviMittalSM/job-tracker](https://github.com/SaanviMittalSM/job-tracker) — contains the dashboard, discovery code, and `postings.json` (job listings only — titles/URLs/deadlines, nothing personal). Your resume stays local-only (`.gitignore`'d) and is never pushed here.
-
-## Files
-
-- `index.html` — the dashboard. Open it directly in any browser. No server, no install. Your edits (status, alumni contact, notes) save to that browser's local storage; discovered postings sync in from GitHub automatically on load.
-- `postings.json` — machine-written by the discovery automation below. Don't hand-edit; it gets overwritten.
-- `scripts/discover.js` + `.github/workflows/discover.yml` — the Greenhouse/Lever discovery automation (runs on GitHub's infrastructure, not dependent on any Claude session).
-- This README.
-
-**Backup habit:** local storage is per-browser and can be cleared. Click **Export JSON** in the dashboard weekly and keep the file somewhere synced. **Import JSON** restores from a backup.
+**Live app:** [saanvimittalsm.github.io/job-tracker](https://saanvimittalsm.github.io/job-tracker/) — sign in with Google.
+**Public repo:** [github.com/SaanviMittalSM/job-tracker](https://github.com/SaanviMittalSM/job-tracker) — contains the app + discovery code + `companies_snapshot.json` (company list only, nothing personal). Your resume stays local-only, never pushed here.
+**Backend:** Supabase (Postgres). `postings` and `companies` are public tables (job-listing data, non-sensitive). `applications` and `gmail_signals` are private, RLS-scoped per signed-in user.
 
 ---
 
-## 1. What's in the dashboard
+## 1. Automated discovery — two pipelines, very different capabilities
 
-Seeded with 100+ companies across Global Big Tech, Global SaaS/Cloud, Indian Product/Fintech, Quant/Finance, AI Research/Frontier, **Voice/Speech AI** (your highest-leverage tier given your ML/voice-AI target roles — Plivo, Deepgram, AssemblyAI, ElevenLabs, Sarvam AI, Uniphore, Skit.ai, Ola Krutrim...), IT Services, and job aggregator portals (LinkedIn Jobs, Glassdoor, Naukri, Wellfound, Instahyre, Cutshort, Hirist, Internshala, SpeechTechJobs).
+### Pipeline A: GitHub Actions + official company APIs (fully automatic, zero manual steps)
 
-Each row tracks: category, role, **postings** (one or more direct links + deadlines, auto-populated where possible), **status**, **applied date** (auto-stamped — see below), alumni contact, outreach status, **outreach-sent date** (auto-stamped), last synced/checked, notes.
+`scripts/discover.js` calls the **public, unauthenticated** job-board APIs that Greenhouse, Lever, and Amazon expose for exactly this purpose — not scraping, these are documented endpoints. `.github/workflows/discover.yml` runs it every 8 hours on GitHub's own infrastructure — no Claude session involved, keeps running even if this chat is never opened again. Currently covers **37 companies** confirmed on these platforms (systematically probed against the full company list, not hand-picked), including Anthropic, Databricks, Stripe, GitLab, MongoDB, Twilio, Plivo, CRED, Meesho, Razorpay, Amazon, and more. Uses replace-semantics each run (deletes-then-reinserts its own postings) so closed roles don't linger as stale data.
 
-**No manual date typing.** `dateApplied` auto-fills the day you move Status to Applied-or-later; `outreachDate` auto-fills the day you move Outreach to Sent-or-later. The old skill/interest/comp-level fit-score fields were removed — sort/filter by category and postings instead.
+The same workflow also exports `companies_snapshot.json` — the current company list plus which ones are API-covered — and commits it. This is what makes Pipeline B dynamic instead of hardcoded (see below).
 
----
+### Pipeline B: scheduled Claude routines + WebSearch (broader net, needs a manual merge step)
 
-## 2. Automated discovery — two independent pipelines
+For the ~86 companies without a discoverable public API (most Global Big Tech, Quant/Finance, IT Services, Voice/Speech AI startups, Indian product companies), two scheduled routines run WebSearch, managed at [claude.ai/code/routines](https://claude.ai/code/routines):
 
-### Pipeline A: GitHub Actions + Greenhouse/Lever APIs (primary, fully automatic)
+- **"Weekly new-company discovery"** — researches genuinely new, relevant companies to add to the tracker (funded startups, YC-backed, voice-AI, fintech). Caps at 6 additions/run to keep quality high.
+- **"Big Tech/Quant/IT-Services job discovery"** — searches the dynamic non-API-covered company list (read from `companies_snapshot.json`, not hardcoded) for specific, targeted postings.
 
-`scripts/discover.js` calls the **public, unauthenticated** job-board APIs that Greenhouse and Lever expose for exactly this purpose (not scraping — these are documented APIs meant for programmatic reads). `.github/workflows/discover.yml` runs it every 8 hours entirely on GitHub's infrastructure — no Claude session, no API key, no cost, keeps running even if you never open this chat again. It currently covers 22 companies confirmed on these platforms (Anthropic, Figma, Databricks, Scale AI, AssemblyAI, Stripe, Slice, GitLab, Elastic, MongoDB, Cloudflare, Okta, Zscaler, Twilio, Dropbox, Postman, xAI, Plivo, CRED, Meesho, Porter, Freshworks), filters for India-located + entry-level titles, and commits results straight to `postings.json`.
+**Hard platform constraint, confirmed by direct testing (not assumed):** these routines run in a sandboxed environment that (a) blocks outbound network calls to Supabase, and (b) blocks `git push` (403, even though `git clone`/`pull` work fine). Their **only** output channel is their final answer text. This means Pipeline B cannot be fully hands-off — someone has to read the routine's output and write it into Supabase. That's the "merge cycle" below.
 
-### Pipeline B: scheduled Claude routine + WebSearch (secondary, broader net)
+### What's still fully manual
 
-For companies not on Greenhouse/Lever (Sarvam AI, Krutrim, Uniphore, Skit.ai, Gnani.ai, most Indian Product/Fintech companies, AI Research/Frontier), a scheduled cloud routine runs daily (~8 AM IST), does targeted web searches, and — once repo write access is confirmed working — commits its findings to the same `postings.json`. Manage it at [claude.ai/code/routines](https://claude.ai/code/routines) (routine: "Daily India job posting discovery — priority tier").
-
-### How the dashboard consumes both
-
-On every page load, `index.html` fetches `postings.json` straight from `raw.githubusercontent.com` (works even from a local file, since that's a remote HTTPS request, not a local one) and merges new postings/deadlines in automatically — no manual "sync" step required, though a **🔄 Sync from GitHub** button exists for forcing an immediate refresh.
-
-### What's still manual
-
-Companies not covered by either pipeline (most Global Big Tech, Quant/Finance, IT Services, and aggregator portals) fall back to a one-click **check** button per row — no typing, just marks "checked today" so the stale-row highlighting stays honest.
+Aggregator portals (Naukri, Wellfound, LinkedIn Jobs, etc.) aren't employers — they're places *you* search, not places postings get pulled *from*. No automation applies to them; use the one-click **check** button per row if you look at one manually.
 
 ---
 
-## 3. BITS Pilani alumni referral workflow
+## 2. The merge cycle — how Pipeline B's results actually get into the dashboard
 
-I don't automate LinkedIn (no scraping, no auto-connect, no auto-send — violates their ToS and risks your account) and I won't build bulk contact-scraping tools for the same underlying reason: pulling people's personal emails/phone numbers without consent for unsolicited outreach is a privacy/ToS problem regardless of which tool does it. **ContactOut** (a legitimate paid B2B contact-data product operating within its own compliance framework) is the sanctioned path if/when you get an account — ask and I'll wire up the lookup step. Until then:
+Since the routine can't write anywhere itself, this is a repeatable procedure (originally manual, now scripted down to two commands):
+
+1. **Fetch the routine's latest output.** Via the `RemoteTrigger` tool: `list_runs` on the routine to find the latest session, then `get_run_log` to pull its final report text (the structured `### Category / **Company** / - Title - URL - deadline` format it's instructed to produce).
+2. **Save the report text** to a local file, e.g. `scratch/report.txt`.
+3. **Run the merge script:**
+   ```
+   node scripts/merge_report.js scratch/report.txt
+   ```
+   This parses the report and upserts into Supabase (`postings` + `company_checks`). It automatically **filters out generic company-homepage links** (bare domains, `/careers` with nothing else) — those get printed separately for manual review instead of silently inserted as if they were real targeted postings. Only genuinely specific role postings (real req IDs, program pages with an actual application path) go in.
+4. **Spot-check** the skipped list the script prints — if a "generic" flag was a false positive (occasionally a program page like a campus-hiring track is legitimately targeted despite a short URL), insert it manually the same way `merge_report.js` does internally, or loosen the check for that one case.
+5. **Re-run tests:** `node tests/run-all.js` to confirm the merge didn't break anything.
+
+Both routines are on a **3-day cadence**. In practice: every ~3 days, ask me to check the routines and merge — I run steps 1-5. This isn't zero-touch, but it's the honest ceiling given the sandbox's network/git restrictions confirmed above; anything claiming to be more automatic than this for Pipeline B would be overstating what the platform allows.
+
+---
+
+## 3. Gmail response detection + notification center
+
+A separate daily routine ("Daily Gmail application signal scan") searches your connected Gmail (`mittalsaanvi14@gmail.com`) for direct company-to-candidate application activity — confirmations, interview invites, rejections, offers — explicitly **excluding** anything relayed through the BITS Pilani campus placement cell (tracked separately, out of scope for this tool). Same manual-merge constraint applies: the routine reports findings as text; merging into the `gmail_signals` table is a manual insert (smaller volume than job postings, so no dedicated script yet — ask me to check and merge when needed).
+
+Once in `gmail_signals`, the app surfaces them via the **🔔 notification bell** in the header: a badge shows the pending count, clicking it opens a panel per finding with **Apply** (sets that row's status + auto-stamps the date, matches by company name) or **Dismiss**. If you've granted browser notification permission (the bell prompts for it), new signals also trigger a native OS notification while the tab is open.
+
+---
+
+## 4. BITS Pilani alumni referral workflow
+
+I don't automate LinkedIn (scraping/auto-connect/auto-send violates their ToS and risks your account) and won't build bulk contact-scraping tools for the same underlying reason — pulling people's personal contact info without consent for unsolicited outreach is a privacy problem regardless of mechanism. **ContactOut** (a legitimate paid B2B contact-data product) is the sanctioned path if/when you get an account.
 
 ### Step 1 — Find alumni (5-10 min per company)
 
@@ -77,18 +89,16 @@ Outreach status: `Message Drafted` → `Sent` (auto-stamps the date) → `Respon
 
 ---
 
-## 4. Roadmap — mobile app + real backend
+## 5. Testing
 
-Agreed direction: a PWA (installable, no app store needed) backed by a real database (Supabase — Postgres + auto-generated REST API + auth, free tier) instead of browser-only local storage, so your data syncs across devices.
-
-**Status: blocked on Supabase account creation** — that step needs your direct sign-up (email/OAuth + ToS acceptance), which I can't do on your behalf. Once you have a project, share the project URL + anon key (safe to share, designed to be client-visible) and I'll wire up: the PWA manifest + service worker, migrating the dashboard's local-storage logic to Supabase calls, and pointing the discovery pipelines at the database directly instead of (or alongside) `postings.json`.
+`node tests/run-all.js` runs the full suite (unit — role-filter regex logic; integration — live Supabase RLS/schema checks; functional — live pipeline run + deployed-asset reachability). Run it after any change to `discover.js`, the schema, or `index.html`'s data layer.
 
 ---
 
-## 5. Suggested daily loop
+## 6. Suggested loop (every few days)
 
-1. Open the dashboard — it auto-syncs from GitHub on load. Skim anything new.
-2. For any row with an interesting posting you haven't applied to: apply on the portal, flip Status to Applied (date auto-stamps).
-3. For strong-fit companies you've applied to: start alumni search, draft + send 2-3 messages max/day.
-4. Use the **check** button on non-automated rows you looked at manually.
-5. Export JSON backup weekly.
+1. Open the app — auto-loads live from Supabase. Check the 🔔 bell for new Gmail-detected responses.
+2. For interesting postings you haven't applied to: apply on the portal, flip Status to Applied (date auto-stamps).
+3. For strong-fit companies you've applied to: alumni search, draft + send 2-3 messages max/day.
+4. Every ~3 days: ask me to run the merge cycle (§2) so Pipeline B's findings land in the dashboard.
+5. Export JSON backup weekly (button in the header).
