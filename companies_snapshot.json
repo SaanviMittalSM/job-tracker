@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T11:44:05.271Z",
+  "generatedAt": "2026-08-21T19:39:02.664Z",
   "totalCompanies": 123,
   "needsWebsearchCount": 86,
   "companies": [
@@ -25,7 +25,7 @@
       "portal_url": "https://www.amazon.jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Apple",
@@ -145,7 +145,7 @@
       "portal_url": "https://careers.linkedin.com",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Netflix",
@@ -161,7 +161,7 @@
       "portal_url": "https://www.databricks.com/company/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Snowflake",
@@ -177,7 +177,7 @@
       "portal_url": "https://stripe.com/jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Intuit",
@@ -201,7 +201,7 @@
       "portal_url": "https://www.cloudflare.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Okta",
@@ -209,7 +209,7 @@
       "portal_url": "https://www.okta.com/company/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Zscaler",
@@ -217,7 +217,7 @@
       "portal_url": "https://www.zscaler.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "CrowdStrike",
@@ -249,7 +249,7 @@
       "portal_url": "https://www.mongodb.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Twilio",
@@ -257,7 +257,7 @@
       "portal_url": "https://www.twilio.com/company/jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Dropbox",
@@ -265,7 +265,7 @@
       "portal_url": "https://www.dropbox.com/jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Box",
@@ -289,7 +289,7 @@
       "portal_url": "https://www.postman.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "BrowserStack",
@@ -321,7 +321,7 @@
       "portal_url": "https://www.elastic.co/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "GitLab",
@@ -329,7 +329,7 @@
       "portal_url": "https://about.gitlab.com/jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Figma",
@@ -337,7 +337,7 @@
       "portal_url": "https://www.figma.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Notion",
@@ -369,7 +369,7 @@
       "portal_url": "https://razorpay.com/jobs",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Zomato",
@@ -393,7 +393,7 @@
       "portal_url": "https://www.phonepe.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Paytm",
@@ -401,7 +401,7 @@
       "portal_url": "https://paytm.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Groww",
@@ -409,7 +409,7 @@
       "portal_url": "https://groww.in/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Zerodha",
@@ -425,7 +425,7 @@
       "portal_url": "https://www.freshworks.com/company/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "CRED",
@@ -433,7 +433,7 @@
       "portal_url": "https://careers.cred.club",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Meesho",
@@ -441,7 +441,7 @@
       "portal_url": "https://careers.meesho.com",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Urban Company",
@@ -457,7 +457,7 @@
       "portal_url": "https://sliceit.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Juspay",
@@ -545,7 +545,7 @@
       "portal_url": "https://porter.in/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Delhivery",
@@ -617,7 +617,7 @@
       "portal_url": "https://optiver.com/working-at-optiver",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "IMC Trading",
@@ -625,7 +625,7 @@
       "portal_url": "https://www.imc.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "D E Shaw",
@@ -649,7 +649,7 @@
       "portal_url": "https://careers.airbnb.com",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Spotify",
@@ -697,7 +697,7 @@
       "portal_url": "https://www.pinterestcareers.com",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Coinbase",
@@ -705,7 +705,7 @@
       "portal_url": "https://www.coinbase.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "OpenAI",
@@ -721,7 +721,7 @@
       "portal_url": "https://deepmind.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Anthropic",
@@ -729,7 +729,7 @@
       "portal_url": "https://www.anthropic.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "HuggingFace",
@@ -745,7 +745,7 @@
       "portal_url": "https://scale.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Palantir",
@@ -753,7 +753,7 @@
       "portal_url": "https://www.palantir.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Perplexity AI",
@@ -777,7 +777,7 @@
       "portal_url": "https://x.ai/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Plivo",
@@ -785,7 +785,7 @@
       "portal_url": "https://www.plivo.com/careers/",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Exotel",
@@ -809,7 +809,7 @@
       "portal_url": "https://www.assemblyai.com/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "ElevenLabs",
@@ -849,7 +849,7 @@
       "portal_url": "https://www.observe.ai/careers",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Skit.ai",
@@ -977,7 +977,7 @@
       "portal_url": "https://www.parloa.com/careers/",
       "covered_by_api": true,
       "needs_websearch": false,
-      "last_checked_at": "2026-08-21T11:43:55.869+00:00"
+      "last_checked_at": "2026-08-21T19:38:38.653+00:00"
     },
     {
       "company": "Navi",
